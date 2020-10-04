@@ -1,4 +1,10 @@
+cmake-build-debug
 libs/bullet3
-*.wav
+.idea/
+turnedin/
+*.obj
 *.mp4
-
+*.mtl
+*.vbm
+*.wav
+*.zip
