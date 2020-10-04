@@ -4,8 +4,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-
-	class objloader {
+class objloader {
 	public:
 		//! Constructor
 		//!
