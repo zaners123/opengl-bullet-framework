@@ -2,7 +2,7 @@
 
 Some really good (fine, they're just okay) OpenGL/Bullet code examples.
 
-I'd recommend checking out mostly just the ```/nonEuclidean/main.cpp``` file, since that's the most recent of these ones. It relies mostly on ```/libs/node/```, which is what I would consider the most useful part of this whole code pile.
+I'd recommend first taking a look at the ```/nonEuclidean/main.cpp``` file, since that's the most recent of these ones. It relies mostly on ```/libs/node/```, which is what I would consider the most useful part of this whole code pile.
 
 Has stuff like:
  - Instancing

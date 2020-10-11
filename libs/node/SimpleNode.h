@@ -8,6 +8,10 @@
 //normal C stuff
 #include <cstdio>
 #include <stack>
+#include <BulletCollision/CollisionShapes/btTriangleMesh.h>
+#include <BulletCollision/CollisionShapes/btTriangleMeshShape.h>
+#include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
+#include <BulletCollision/CollisionShapes/btConvexHullShape.h>
 #include "Node.h"
 #include "../../libs/camera/camera.h"
 
@@ -50,6 +54,31 @@ public:
 		p.y = y;
 		p.z = z;
 		return p;
+	}
+
+	virtual void replaceRigidBody() override {
+		//physics
+		std::vector<btVector3> convexPoints;
+		for(Triangle& t : triangleData) {
+			glm::vec3 a = applyPosOnly(glm::vec3(t.pointA.x,t.pointA.y,t.pointA.z));
+			convexPoints.push_back(btVector3(a.x,a.y,a.z));
+			glm::vec3 b = applyPosOnly(glm::vec3(t.pointB.x,t.pointB.y,t.pointB.z));
+			convexPoints.push_back(btVector3(b.x,b.y,b.z));
+			glm::vec3 c = applyPosOnly(glm::vec3(t.pointC.x,t.pointC.y,t.pointC.z));
+			convexPoints.push_back(btVector3(c.x,c.y,c.z));
+		}
+		btConvexHullShape* shape = new btConvexHullShape(&convexPoints[0].getX(), convexPoints.size(), sizeof(btVector3));
+		shape->optimizeConvexHull();
+		shape->recalcLocalAabb();
+
+		btDefaultMotionState* ms = new btDefaultMotionState();
+		btVector3 inertia(0,0,0);
+		if (mass!=0) shape->calculateLocalInertia(mass, inertia);
+		setRigidBody(new btRigidBody(mass, ms, shape, inertia));
+		rb->setFriction(0.1f);
+		rb->setRollingFriction(0.1f);
+		rb->setSpinningFriction(0.0f);
+//		rb->setContactStiffnessAndDamping(0.5f,0.5f);
 	}
 
 	void addTri(Point a, Point b, Point c) {

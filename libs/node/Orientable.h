@@ -4,35 +4,66 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
-/***/
+
+/**An orientable shape has:
+ *  - A way to be oriented in OpenGL's format (A 4x4 matrix with orientation and all that)
+ *  - A way to br oriented in Bullet's format (a center of mass)
+ * This way, a shape can both have weird matrix modifications and still be able to be moved by its center of mass.
+ *
+ * OpenGL scale/multiplication is applied first, then center of mass.
+ * */
 class Orientable {
 public:
-	glm::mat4 pos = glm::mat4(1);
-
-	glm::mat4 applyPos(glm::mat4 wvp) {
-		return wvp * pos;
+	Orientable() {
+		replaceRigidBody();
 	}
-	glm::vec3 applyPos(glm::vec3 wvp) {
-		glm::vec4 p = glm::vec4(wvp.x,wvp.y,wvp.z,0);
+
+	glm::mat4 pos = glm::mat4(1);
+	//todo also orientation
+	glm::vec3 com = glm::vec3(0,0,0);
+	glm::mat4 orientation = glm::mat4(1);
+
+	/**Applies OpenGL mat4 position multiplication only*/
+	/*glm::mat4 applyOpenglOnly(const glm::mat4& wvp) {
+		return wvp * pos;
+	}*/
+	glm::vec3 applyPosOnly(const glm::vec3& wvp) {
+		glm::vec4 p = glm::vec4(wvp.x,wvp.y,wvp.z,1);
 		p = pos * p;
 		return glm::vec3(p.x,p.y,p.z);
 	}
-
-	virtual void setPos(glm::mat4 pos) {
-		this->pos = pos;
+	/**Applies bullet vec3 com multiplication only todo modify orientation too*/
+	/*glm::mat4 applyBulletOnly(const glm::mat4& wvp) {
+		return glm::translate(wvp,com) * orientation;
+	}*/
+	glm::mat4 applyPos(const glm::mat4& wvp) {
+		std::cout<<com.x<<','<<com.y<<','<<com.z<<','<<std::endl;
+//		return (glm::translate(wvp,com) * pos) * orientation;
+		return ((glm::translate(wvp,com) * orientation) * pos);
+//		return applyBulletOnly(applyOpenglOnly(wvp));
 	}
+
+	virtual void replaceRigidBody() {
+
+	}
+
+	virtual void setPos(const glm::mat4& pos) {
+		this->pos = pos;
+		replaceRigidBody();
+	}
+
 	virtual glm::mat4 getPos() {
 		return this->pos;
 	}
 
-	//some example common modifications
-	virtual void move(GLfloat x, GLfloat y, GLfloat z) {
-		setPos(glm::translate(getPos(), glm::vec3(x,y,z)));
-	}
+	//-------------------------------------------------------------------
+	// some example common modifications
+	//-------------------------------------------------------------------
 
 	virtual void scale(GLfloat factor) {
-		setPos(glm::scale(getPos(), glm::vec3(factor,factor,factor)));
+		scale(factor,factor,factor);
 	}
 
 	virtual void scale(GLfloat x, GLfloat y, GLfloat z) {

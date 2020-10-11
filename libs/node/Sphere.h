@@ -30,6 +30,7 @@ public:
 		this->subdivisions = subdivisions;
 		genSphere();
 		fillBuffers();
+		replaceRigidBody();
 	}
 };
 #endif

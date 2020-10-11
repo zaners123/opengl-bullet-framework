@@ -1,7 +1,6 @@
 //magic OpenGL stuff
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <glm/gtc/matrix_transform.hpp>
 //normal C stuff
 #include <cstdio>
 #include <stack>
@@ -9,21 +8,16 @@
 #include <BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
 #include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
-#include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <LinearMath/btDefaultMotionState.h>
-#include <BulletCollision/CollisionShapes/btStaticPlaneShape.h>
 //my stuff
 #include "../libs/camera/camera.h"
 #include "../libs/node/Maze.h"
-#include "../libs/node/Plane.h"
-#include "../libs/node/PointMaze.h"
 #include "../libs/node/Cube.h"
 #include "../libs/Timer.h"
 #include "../libs/node/NodeVector.h"
-#include "../libs/node/Portal.h"
 #include "../libs/node/Cylinder.h"
 #include "../libs/node/Sphere.h"
-#include "../libs/player/GhostCameraController.h"
+#include "../libs/node/SimpleCube.h"
 
 
 Camera* cam;
@@ -34,46 +28,6 @@ btDbvtBroadphase* overlappingPairCache;
 btSequentialImpulseConstraintSolver* solver;
 btDiscreteDynamicsWorld* dynamicsWorld;
 
-/*void testBullet() {
-	//make an environment
-	collisionConfig = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfig);
-	overlappingPairCache = new btDbvtBroadphase();
-	solver = new btSequentialImpulseConstraintSolver();
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache, solver, collisionConfig);
-	dynamicsWorld->setGravity(btVector3(0.0f, -9.8f, 0.0f));
-
-
-	//make a falling cube
-	btBoxShape* boxCollisionShape = new btBoxShape(btVector3(btScalar(5.), btScalar(5.), btScalar(5.)));
-	btScalar boxMass = 1;
-	btDefaultMotionState* boxMotionState = new btDefaultMotionState();
-	btVector3 localInertia(0, 0, 0);
-	btRigidBody* fallingCubeRB = new btRigidBody(boxMass, boxMotionState, boxCollisionShape, localInertia);
-	btTransform rbLoc = fallingCubeRB->getCenterOfMassTransform();
-	rbLoc.setOrigin(rbLoc.getOrigin()+btVector3(0,500,0));
-	fallingCubeRB->setCenterOfMassTransform(rbLoc);
-	boxCollisionShape->calculateLocalInertia(boxMass, localInertia);
-	dynamicsWorld->addRigidBody(fallingCubeRB);
-
-
-	//make a stationary platform
-	btStaticPlaneShape* floorShape = new btStaticPlaneShape(btVector3(0, 1, 0)*//*Normal*//*, 0*//*Thickness*//*);
-	btScalar floorMass = 0;//won't move
-	btDefaultMotionState* floorMotionState = new btDefaultMotionState();
-	btVector3 floorInertia(0,0,0);
-	btRigidBody* floorRB = new btRigidBody(floorMass, floorMotionState, floorShape, floorInertia);
-	dynamicsWorld->addRigidBody(floorRB);
-
-	//simulate!
-	btVector3 pos;
-	for (int x=0;x<1000;x++) {
-		pos=fallingCubeRB->getCenterOfMassPosition();
-		std::cout<<pos.x()<<','<<pos.y()<<','<<pos.z()<<'\n';
-		dynamicsWorld->stepSimulation(1.f/60.f,10);
-	}
-}*/
-
 void initBullet() {
 	collisionConfig = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfig);
@@ -83,27 +37,27 @@ void initBullet() {
 	dynamicsWorld->setGravity(btVector3(0.0f, -9.8f, 0.0f));
 }
 
-void addToPhysicsWorld(Node* node) {
-	btRigidBody* rigidBody = node->getRigidBody();
-	if (rigidBody) {
-		dynamicsWorld->addRigidBody(rigidBody);
-	} else {
-		std::cerr<<"Node hath no Body"<<std::endl;
-	}
-}
-
 void stepBullet() {
 	dynamicsWorld->stepSimulation(1.f/60.f,10);
+	rootNode->updateUsingRigidBody();
 }
 
 void setupRootNode() {
-	initBullet();
-
 	rootNode = new NodeVector();
-	Cube* c = new Cube(true);
-	c->scale(5.0f);
-	addToPhysicsWorld(c);
+	rootNode->setPhysicsWorld(dynamicsWorld);
+	auto* c = new Sphere();
+	c->setFixed();
+//	c->move(0,-50,0);
+//	c->setPos(glm::rotate(c->getPos(),(float)(M_PI/1.9f),glm::vec3(1,0,0)));
+	c->scale(50);
 	rootNode->push(c);
+
+	/*for (int i=0;i<1000;i++) {
+		auto* s = new SimpleCube();
+		s->move(0,5+i*5,0);
+//		s->scale(50);
+		rootNode->push(s);
+	}*/
 
 	/*rootNode = new NodeVector();
 	rootNode->push(new Cube(true));
@@ -115,16 +69,16 @@ void setupRootNode() {
 	auto* inside = new NodeVector();
 	rootNode->push(new Portal(portalFace, inside, outside));
 	//make frame
-	outside->push((new Cube(true))->move(55, 0, 0)->scale(10,10,120));
-	outside->push((new Cube(true))->move(-55, 0, 0)->scale(10,10,120));
-	outside->push((new Cube(true))->move(0, 0, 55)->scale(100,10,10));
-	outside->push((new Cube(true))->move(0, 0, -55)->scale(100,10,10));
+	outside->push((new Cube(true))->moveR(55, 0, 0)->scaleR(10,10,120));
+	outside->push((new Cube(true))->moveR(-55, 0, 0)->scaleR(10,10,120));
+	outside->push((new Cube(true))->moveR(0, 0, 55)->scaleR(100,10,10));
+	outside->push((new Cube(true))->moveR(0, 0, -55)->scaleR(100,10,10));
 	//put stuff outside
-	outside->push((new Cube(true))->move(50, 20, 0)->scale(10));
-	outside->push((new Cylinder(1000))->move(0,30,0)->scale(10));
+	outside->push((new Cube(true))->moveR(50, 20, 0)->scaleR(10));
+	outside->push((new Cylinder(1000))->moveR(0,30,0)->scaleR(10));
 	//put stuff inside
-	inside->push((new Cube(true))->scale(10)->move(0,-10,0));
-	inside->push((new Sphere())->move(0,-5,0));*/
+	inside->push((new Cube(true))->scaleR(10)->moveR(0,-10,0));
+	inside->push((new Sphere())->moveR(0,-5,0));*/
 }
 
 void init() {
@@ -136,6 +90,7 @@ void init() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	initBullet();
 	setupRootNode();
 }
 
@@ -149,6 +104,7 @@ void display() {
 	fps.tick();
 //	glScissor(0,0,cam->windowX,cam->windowY);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	std::cout<<"DRAW ROOT"<<std::endl;
 	drawRootNode();
 	glFlush();
 //	glutPostRedisplay();
@@ -156,6 +112,16 @@ void display() {
 
 void physicsLoop() {
 	stepBullet();
+
+	static int i = 0;
+	if (i++ > 0) {
+		i=0;
+		auto* s = new SimpleCube();
+		s->move(0,500,0);
+//		s->scale(10);
+		rootNode->push(s);
+	}
+
 }
 
 void gameLoop(int n) {
