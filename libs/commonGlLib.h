@@ -38,23 +38,26 @@ char* ReadFile(const char* filename) {
 
 /*************************************************************/
 /************************************/
-GLuint loadTexture(const ILstring filename) {
-	ILboolean success;
+GLuint loadTexture(const char* filename) {
 
-	ILuint imageID;
+	ILboolean success = false;
+
+	ILuint imageID = 0;
 	ilGenImages(1, &imageID);
-	ilBindImage(imageID); /* Binding of DevIL image name */
+	ilBindImage(imageID);
+//	std::cout<<"Gen image ID:"<<imageID<<" for "<<filename<<std::endl;
 	ilEnable(IL_ORIGIN_SET);
 	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+
 	success = ilLoadImage(filename);
 
 	if (!success) {
-		printf("Couldn't load the following texture file: %s", filename);
+		printf("Couldn't load the following texture file: %s\n", filename);
 		// The operation was not successful hence free image and texture
 		ilDeleteImages(1, &imageID);
 		return 0;
 	} else {
-		std::cout<<"I was able to load image "<<filename;
+		std::cout<<"I was able to load image"<<filename<<'\n';
 	}
 
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);

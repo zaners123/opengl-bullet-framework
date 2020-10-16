@@ -15,10 +15,7 @@
 #include "../libs/node/Cube.h"
 #include "../libs/Timer.h"
 #include "../libs/node/NodeVector.h"
-#include "../libs/node/Cylinder.h"
 #include "../libs/node/Sphere.h"
-#include "../libs/node/Cube.h"
-
 
 Camera* cam;
 NodeVector* rootNode;
@@ -52,12 +49,12 @@ void setupRootNode() {
 	c->scale(50);
 	rootNode->push(c);
 
-	/*for (int i=0;i<1000;i++) {
-		auto* s = new Cube();
+	for (int i=0;i<1;i++) {
+		auto* s = new Sphere(5);
 		s->move(0,5+i*5,0);
 //		s->scale(50);
 		rootNode->push(s);
-	}*/
+	}
 
 	/*rootNode = new NodeVector();
 	rootNode->push(new Cube(true));
@@ -111,14 +108,14 @@ void display() {
 }
 
 void onFrame() {
-	static int i = 0;
+	/*static int i = 0;
 	if (i++ > 10) {
-		i=0;
-		auto* s = new Sphere();
+		i=0;*/
+		/*auto* s = new Sphere();
 		s->move(0,500,0);
 		s->setInstantaneousChangeInVelocity(0,-100,0);
-		rootNode->push(s);
-	}
+		rootNode->push(s);*/
+	/*}*/
 }
 
 void gameLoop(int n) {
@@ -137,6 +134,7 @@ int main(int argc, char** argv) {
 		printf("%s\n", "Unable to initialize GLEW ...");
 		return 1;
 	}
+	ilInit();
 	init();
 	/* we can now get data for the specific OpenGL instance we created */
 	printf("GL Vendor : %s\n", glGetString(GL_RENDERER));

@@ -384,7 +384,7 @@ public:
 		return std::chrono::duration_cast<std::chrono::duration<double,std::ratio<1>>>(clock::now() - start).count();
 	}
 	~Timer() {
-		std::cout<<"Time: "<<getElapsed()<<"s";
+		std::cout<<"Time: "<<getElapsed()<<"s\n";
 	}
 };
 GLuint instanceProg;

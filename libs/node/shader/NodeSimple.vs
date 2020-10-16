@@ -10,8 +10,9 @@ uniform mat4 wvp;
 
 out vec4 color;
 out vec4 pos;
-
+out vec2 texCoorded;
 void main(){
+	texCoorded = texCoord;
 	pos = wvp * vPosition;
 	gl_Position = wvp * vPosition;
 	color = incolor;

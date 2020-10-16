@@ -100,13 +100,11 @@ public:
 
 	SimpleNode() {
 		prog = initShaders("../libs/node/shader/NodeSimple.vs", "../libs/node/shader/NodeSimple.fs");
-
 		glUniform1i(glGetUniformLocation(prog, "Tex1"), 0);
 		glActiveTexture(GL_TEXTURE0);
+		appleTexture = loadTexture("../apple.jpg");
 		initBuffers();
 		clearTris();
-
-//		appleTexture = loadTexture("../apple.jpg");
 	}
 
 	void clearTris() {
@@ -121,6 +119,7 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, triangleData.size() * sizeof(Triangle), &triangleData[0], GL_STATIC_DRAW);
 
 		GLsizei stride = 5*sizeof(GLfloat);
+		void* textureOffset = (void*)(3*sizeof(GLfloat));
 
 		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, stride, 0);
 		glEnableVertexAttribArray(0);  // Position data
@@ -128,7 +127,7 @@ public:
 		glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, stride, 0);
 		glEnableVertexAttribArray(1); // Color data
 
-		glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(3));
+		glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, stride, textureOffset);
 		glEnableVertexAttribArray(2); // Texture Data
 
 		glBindVertexArray(0);
