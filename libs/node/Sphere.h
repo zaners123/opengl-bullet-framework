@@ -5,23 +5,24 @@
  * */
 class Sphere : public SimpleNode {
 	int subdivisions;
-	Point pt(double a, double b, double c) {
-		double sd = subdivisions;
+	Point pt(double x, double y) {
 		return point(
-				glm::sin((c/subdivisions) * (2 * M_PI)) * glm::cos(a * 2 * M_PI / sd),
-				glm::sin((c/subdivisions) * (2 * M_PI)) * glm::sin(b * 2 * M_PI / sd),
-				glm::cos((c/subdivisions) * (2 * M_PI))
+				glm::sin((y / subdivisions) * (2 * M_PI)) * glm::cos(x * 2 * M_PI / subdivisions),
+				glm::sin((y / subdivisions) * (2 * M_PI)) * glm::sin(x * 2 * M_PI / subdivisions),
+				glm::cos((y / subdivisions) * (2 * M_PI)),
+				x,
+				y
 		);
 	}
 	void genSphere() {
 		for (int r=0;r<subdivisions;r++) {
 			for (int i=0;i<subdivisions;i++) {
-				addTri(	pt(i,i,r),
-						pt(i,i,r+1),
-						pt(i+1,i+1,r));
-				addTri( pt(i,i,r+1),
-						pt(i+1,i+1,r),
-						pt(i+1,i+1,r+1));
+				addTri(	pt(i,r),
+						pt(i,r+1),
+						pt(i+1,r));
+				addTri( pt(i,r+1),
+						pt(i+1,r),
+						pt(i+1,r+1));
 			}
 		}
 	}

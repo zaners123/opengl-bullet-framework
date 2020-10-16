@@ -1,5 +1,5 @@
-#ifndef OPENGL_SIMPLENODE_H
-#define OPENGL_SIMPLENODE_H
+#ifndef OPENGL_TEXTUREDNODE_H
+#define OPENGL_TEXTUREDNODE_H
 
 //magic OpenGL stuff
 #include <GL/glew.h>
@@ -12,16 +12,18 @@
 #include <BulletCollision/CollisionShapes/btTriangleMeshShape.h>
 #include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <BulletCollision/CollisionShapes/btConvexHullShape.h>
+#include <LinearMath/btDefaultMotionState.h>
 #include "Node.h"
 #include "../../libs/camera/camera.h"
 #include "../commonGlLib.h"
+#include "SimpleNode.h"
 
 /**
  * A node, but with all the triangle buffer logic taken care of
  * */
-class SimpleNode : public Node {
+/*class TexturedNode : public SimpleNode {
 
-	int getNumVerts() {
+	unsigned long getNumVerts() {
 		return triangleData.size()*3;
 	}
 
@@ -33,7 +35,6 @@ class SimpleNode : public Node {
 public:
 	struct Point {
 		GLfloat x,y,z;
-		GLfloat texX, texY;
 	};
 	struct Triangle {
 		Point pointA;
@@ -44,13 +45,11 @@ private:
 	std::vector<Triangle> triangleData;
 public:
 
-	static Point point(GLfloat x, GLfloat y, GLfloat z, GLfloat texX, GLfloat texY) {
+	static Point point(GLfloat x, GLfloat y, GLfloat z) {
 		Point p;
 		p.x = x;
 		p.y = y;
 		p.z = z;
-		p.texX = texX;
-		p.texY = texY;
 		return p;
 	}
 
@@ -96,17 +95,11 @@ public:
 		triangleData.push_back(tri);
 	}
 
-	GLuint appleTexture = 0;
 
 	SimpleNode() {
-		prog = initShaders("../libs/node/shader/NodeSimple.vs", "../libs/node/shader/NodeSimple.fs");
-
-		glUniform1i(glGetUniformLocation(prog, "Tex1"), 0);
-		glActiveTexture(GL_TEXTURE0);
+		prog = initShaders("../libs/camera/NodeSimple.vs", "../libs/camera/NodeSimple.fs");
 		initBuffers();
 		clearTris();
-
-//		appleTexture = loadTexture("../apple.jpg");
 	}
 
 	void clearTris() {
@@ -119,27 +112,23 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 		glBufferData(GL_ARRAY_BUFFER, triangleData.size() * sizeof(Triangle), &triangleData[0], GL_STATIC_DRAW);
-
-		GLsizei stride = 5*sizeof(GLfloat);
-
-		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(0);  // Position data
 
-		glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, stride, 0);
+		glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(1); // Color data
-
-		glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(3));
-		glEnableVertexAttribArray(2); // Texture Data
 
 		glBindVertexArray(0);
 	}
 
+	const GLuint planeTexID = loadTexture("../a7/grass.png");
+
 	void drawDrawable(glm::mat4 wvp) override {
 		glUseProgram(prog);
 		glUniformMatrix4fv(glGetUniformLocation(prog, "wvp"), 1, GL_FALSE, (GLfloat *) &wvp);
-		glBindTexture(GL_TEXTURE_2D, appleTexture);
+		glBindTexture(GL_TEXTURE_2D, planeTexID);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, getNumVerts());
 	}
-};
+};*/
 #endif

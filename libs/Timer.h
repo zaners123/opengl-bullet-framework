@@ -33,7 +33,9 @@ public:
 		nbFrames++;
 		if (printAt < currentTime) {
 			// printf and reset timer
-			printf("%fFPS\n", double(nbFrames)/currentTime);
+//			printf("%fFPS\n", double(nbFrames)/currentTime);
+			printf("%dFPS\n", nbFrames);
+			nbFrames=0;
 			printAt = currentTime+1;
 		}
 	}

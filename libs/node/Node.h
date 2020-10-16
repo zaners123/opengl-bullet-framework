@@ -47,15 +47,17 @@ public:
 		));
 	}
 
-	virtual void move(GLfloat x, GLfloat y, GLfloat z) {
-//		setPos(glm::translate(getPos(), glm::vec3(x,y,z)));
-		std::cout<<"COM CHANGING from"<<com.x<<","<<com.y<<","<<com.z<<std::endl;
-		com = glm::translate(glm::mat4(1),glm::vec3(x,y,z)) * glm::vec4(com.x,com.y,com.z,1);
-		std::cout<<"COM CHANGING to"<<com.x<<","<<com.y<<","<<com.z<<std::endl;
-
+	virtual void setCOM(GLfloat x, GLfloat y, GLfloat z) {
+		com.x = x;
+		com.y = y;
+		com.z = z;
 		btTransform tmp = rb->getCenterOfMassTransform();
 		tmp.setOrigin(btVector3(tmp.getOrigin().x()+x,tmp.getOrigin().y()+y,tmp.getOrigin().z()+z));
 		rb->setCenterOfMassTransform(tmp);
+	}
+
+	virtual void move(GLfloat x, GLfloat y, GLfloat z) {
+		setCOM(com.x + x,com.y + y,com.z + z);
 	}
 
 	virtual void updateUsingRigidBody() override {
@@ -71,8 +73,15 @@ public:
 		replaceRigidBody();
 	}
 
-	virtual void setVelocity() {
-		rb->
+	/**
+	 * Sets an instantaneous change in velocity. Could also be called a velocity offset.
+	 * */
+	virtual bool setInstantaneousChangeInVelocity(btScalar x, btScalar y, btScalar z) {
+		if (!rb) {
+			std::cerr<<"setInstantaneousChangeInVelocity caled on null rigidbody"<<std::endl;
+			return false;
+		}
+		rb->setLinearVelocity(btVector3(x,y,z) - rb->getLinearVelocity());
 	}
 
 	/**

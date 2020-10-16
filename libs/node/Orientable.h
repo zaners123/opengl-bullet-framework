@@ -39,7 +39,7 @@ public:
 		return glm::translate(wvp,com) * orientation;
 	}*/
 	glm::mat4 applyPos(const glm::mat4& wvp) {
-		std::cout<<com.x<<','<<com.y<<','<<com.z<<','<<std::endl;
+//		std::cout<<com.x<<','<<com.y<<','<<com.z<<','<<std::endl;
 //		return (glm::translate(wvp,com) * pos) * orientation;
 		return ((glm::translate(wvp,com) * orientation) * pos);
 //		return applyBulletOnly(applyOpenglOnly(wvp));

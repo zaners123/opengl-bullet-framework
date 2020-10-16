@@ -2,6 +2,7 @@
 #define OPENGL_PLANE
 
 #include "../../libs/camera/camera.h"
+#include "Node.h"
 
 #define COLLISION_THICKNESS 0.1f
 

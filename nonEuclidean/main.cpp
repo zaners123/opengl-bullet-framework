@@ -17,7 +17,7 @@
 #include "../libs/node/NodeVector.h"
 #include "../libs/node/Cylinder.h"
 #include "../libs/node/Sphere.h"
-#include "../libs/node/SimpleCube.h"
+#include "../libs/node/Cube.h"
 
 
 Camera* cam;
@@ -47,13 +47,13 @@ void setupRootNode() {
 	rootNode->setPhysicsWorld(dynamicsWorld);
 	auto* c = new Sphere();
 	c->setFixed();
-//	c->move(0,-50,0);
+	c->move(0,-50,0);
 //	c->setPos(glm::rotate(c->getPos(),(float)(M_PI/1.9f),glm::vec3(1,0,0)));
 	c->scale(50);
 	rootNode->push(c);
 
 	/*for (int i=0;i<1000;i++) {
-		auto* s = new SimpleCube();
+		auto* s = new Cube();
 		s->move(0,5+i*5,0);
 //		s->scale(50);
 		rootNode->push(s);
@@ -104,37 +104,35 @@ void display() {
 	fps.tick();
 //	glScissor(0,0,cam->windowX,cam->windowY);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	std::cout<<"DRAW ROOT"<<std::endl;
+//	std::cout<<"DRAW ROOT"<<std::endl;
 	drawRootNode();
 	glFlush();
 //	glutPostRedisplay();
 }
 
-void physicsLoop() {
-	stepBullet();
-
+void onFrame() {
 	static int i = 0;
-	if (i++ > 0) {
+	if (i++ > 10) {
 		i=0;
-		auto* s = new SimpleCube();
+		auto* s = new Sphere();
 		s->move(0,500,0);
-//		s->scale(10);
+		s->setInstantaneousChangeInVelocity(0,-100,0);
 		rootNode->push(s);
 	}
-
 }
 
 void gameLoop(int n) {
 	glutTimerFunc(20, gameLoop, n);
 	cam->gameLoop();
-	physicsLoop();
+	stepBullet();
+	onFrame();
 	glutPostRedisplay();
 }
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_STENCIL|GLUT_DEPTH);
-	glutCreateWindow("The Portal");
+	glutCreateWindow("Apple Bowl");
 	if (glewInit()) {
 		printf("%s\n", "Unable to initialize GLEW ...");
 		return 1;

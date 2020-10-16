@@ -6,7 +6,7 @@ class Ring : public SimpleNode {
 		return point(
 				glm::cos(a * 2 * M_PI / sd),
 				glm::sin(b * 2 * M_PI / sd),
-				c / sd
+				c / sd,0,0
 		);
 	}
 	void genRing(int sd) {
