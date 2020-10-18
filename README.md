@@ -19,7 +19,9 @@ If you are on any Debian-based distro, this is how (Ubuntu 20 recommended)
 ```
 sudo apt install cmake libgl1-mesa-dev libdevil-dev libglm-dev libglfw3-dev libglew-dev libespeak-dev libassimp-dev libglfw3 libglew2.1 libespeak1 libassimp5 libglu1-mesa-dev freeglut3-dev mesa-common-dev libbullet-dev
 ```
-If you are not on a Debian-based distro your package manager will likely have equivalents to most/all of these. If you're not using Linux at all, maybe consider switching, or learn how to install these.
+If you are not on a Debian-based distro your package manager will likely have equivalents to most/all of these.
+
+If you're using Windows, you'll likely be able to install the equivalents of these inside of Visual Studio
 
 ### Compiling
 ```

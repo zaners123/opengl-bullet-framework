@@ -3,10 +3,10 @@
 
 int Camera::windowX,Camera::windowY;
 float Camera::cameraSpeed;//walking speed
-float Camera::mouseSensitivity;//spinning speed
-float Camera::rotSensitivity;//q and e screen rotate
-bool Camera::virt;//was mouse movement virtual? this stops the function from calling itself every like 0ms. Really just ignores every other mouse movement...
-float Camera::rot;
+float Camera::mouseSensitivity = 0.001f;//spinning speed
+float Camera::rotSensitivity = 0.1f;//q and e screen rotate
+bool Camera::virt = false;//was mouse movement virtual? this stops the function from calling itself every like 0ms. Really just ignores every other mouse movement...
+float Camera::rot = 0;
 bool Camera::left,Camera::right,Camera::up,Camera::down,Camera::forward,Camera::backward,Camera::movRot,Camera::movCounterRot,Camera::boost,Camera::slow;
 float Camera::xAngle;//where mouse is pointed at, now in 3d!
 float Camera::yAngle;
@@ -14,6 +14,18 @@ glm::mat4 Camera::model;//WVP
 glm::vec3 Camera::cameraDirection;
 glm::vec3 Camera::cameraRight;
 glm::vec3 Camera::upVec;
+
+Camera::Camera(int initW, int initH) {
+	location = glm::vec3(0,10,150);
+	glutInitWindowSize(initW,initH);
+	this->windowX = initW;
+	this->windowY = initH;
+	xAngle = 0;
+	yAngle = 0;
+	cameraSpeed = 1.0f;
+	cameraDirection = glm::vec3(0, 0, -1.0f);
+	upVec = glm::vec3(0, 1.0f, 0.0f);
+}
 
 void Camera::gameLoop() {
 	if (forward)    moveBy(   cameraSpeed * cameraDirection);
@@ -40,13 +52,13 @@ void Camera::keydown(unsigned char key, int x, int y) {
 	}
 	glutPostRedisplay();
 }
+
 void Camera::rotateWorld(int x, int y) {
 	//keep mouse in middle
 	if (!virt) glutWarpPointer(windowX/2,windowY/2);
 	virt = !virt;
 	//if it needs to move at all
 	if (x == windowX/2 && y == windowY/2) return;
-
 	//center at middle of screen
 	x -= windowX/2;
 	y -= windowY/2;
@@ -119,40 +131,8 @@ void Camera::reshape(int x, int y) {
 	windowY = y;
 }
 
-Camera::Camera(int initW, int initH) {
-	location = glm::vec3(0,10,150);
-	glutInitWindowSize(initW,initH);
-	this->windowX = initW;
-	this->windowY = initH;
-	xAngle = 0;
-	yAngle = 0;
-	rot = 0;
-	virt = false;
-	mouseSensitivity = 0.001f;
-	rotSensitivity = 0.1f;
-	cameraSpeed = 1.0f;
-	cameraDirection = glm::vec3(0, 0, -1.0f);
-	upVec = glm::vec3(0, 1.0f, 0.0f);
-}
-
 void Camera::moveBy(glm::vec3 move) {
 	if(boost) move = move * 25.0f;
 	if(slow) move = move  / 25.0f;
 	location += move;
-	//test if colliding with anything
-	//todo WHY IS THE CAMERA DOUBLED HERE? cameraLoc is half what it should be???
-	glm::vec3 player = location * 2.0f;
-
-	//todo have some Drawble vertex where it checks everything in the vertex
-	bool collides = false;
-	//todo how to do this in a
-	//bool collides = m->isCollision(player);
-
-	if (collides) {
-		location -= move;
-	}
-}
-
-bool Camera::isCollision(glm::vec3 point) {
-	return false;
 }

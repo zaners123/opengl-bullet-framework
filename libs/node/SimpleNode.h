@@ -84,8 +84,8 @@ public:
 		if (mass!=0) shape->calculateLocalInertia(mass, inertia);
 		setRigidBody(new btRigidBody(mass, ms, shape, inertia));
 		rb->setFriction(0.3f);
-		rb->setRollingFriction(0.1f);
-		rb->setSpinningFriction(0.1f);
+		rb->setRollingFriction(0.4f);
+		rb->setSpinningFriction(0.4f);
 	}
 	void addTri(Point a, Point b, Point c) {
 		Triangle tri;

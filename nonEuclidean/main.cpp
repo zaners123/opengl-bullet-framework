@@ -109,18 +109,22 @@ void display() {
 
 void onFrame() {
 	//frame-logic, such as making a new object every 10 frames
+
+	//todo uncomment this to spawn a fruit every frame
+
 	/*static int i=0;
 	static int count=0;
-	if (i++>count) {
+	if (i++>100) {
 		i=0;
 		auto* s = new Sphere();
-		int r = rand()%4;
-		if (r==0)s->setTexture("../appleTex2.jpg");
-		if (r==1)s->setTexture("../orange2.png");
-		if (r==2)s->setTexture("../green_apple.jpg");
-		if (r==3)s->setTexture("../mango.jpg");
-		s->move(rand()%10-5,-80+i*5,0);
-		s->scale((((float)(rand()%1000))/1000)*4+.1f);
+		int r = i%5;
+		if (r==0) s->setTexture("../appleTex2.jpg");
+		if (r==1) s->setTexture("../orange2.png");
+		if (r==2) s->setTexture("../green_apple.jpg");
+		if (r==3) s->setTexture("../mango.jpg");
+		if (r==4) s->setTexture("../lemon.png");
+		s->move(rand()%10-5,-80+i*5,rand()%10-5);
+		s->scale((((float)(rand()%1000))/1000)*3+1.0f);
 		rootNode->push(s);
 		count++;
 		if (count%100==0) {
@@ -129,22 +133,17 @@ void onFrame() {
 	}*/
 }
 
-void physicsLoop() {
-	dynamicsWorld->stepSimulation(1.f/60.f);
+void physicsLoop(int n) {
+	glutTimerFunc(10, physicsLoop, n);
+	dynamicsWorld->stepSimulation(1.f/60.f,10);
 	rootNode->updateUsingRigidBody();
+	onFrame();
 }
 
 void drawLoop(int n) {
 	glutTimerFunc(20, drawLoop, n);
 	cam->gameLoop();
 	glutPostRedisplay();
-	onFrame();
-}
-
-void physicsLoopThread() {
-	while(1) {
-		physicsLoop();
-	}
 }
 
 int main(int argc, char** argv) {
@@ -172,8 +171,9 @@ int main(int argc, char** argv) {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	//other stuff
 	glutTimerFunc(100, drawLoop, 0);
+	glutTimerFunc(100, physicsLoop, 0);
 	glutFullScreen();
-	std::thread physicsThread(physicsLoopThread);
+//	std::thread physicsThread(physicsLoopThread);
 	glutMainLoop();
 	return 0;
 }
