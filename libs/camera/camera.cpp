@@ -79,7 +79,6 @@ void Camera::rotateWorld(int x, int y) {
 glm::mat4 Camera::getWVP() {
 	cameraDirection = glm::mat3(model) * glm::vec3(0,0,-1.0f);
 
-	//todo should rotate upVec by x degrees
 	glm::mat3 rotMatrix = glm::mat3(rotate(glm::mat4(1.0f), rot, glm::vec3(0,0,1)));
 	upVec = rotMatrix * glm::vec3(0,1,0);
 
