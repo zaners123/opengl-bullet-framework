@@ -17,6 +17,7 @@
 //my stuff
 #include "../../libs/camera/camera.h"
 #include "Node.h"
+#include "../commonGlLib.h"
 
 class Loc {
 public:
@@ -52,7 +53,7 @@ class Maze : public Node {
 public:
 	explicit Maze(int dim) {
 
-		prog = initShaders("../camera/instance.vs", "../camera/instance.fs");
+		prog = loadShader("../camera/instance.vs", "../camera/instance.fs");
 
 		if (dim%2==0) {
 			std::cerr<<"DO ODD DIM"<<std::endl;

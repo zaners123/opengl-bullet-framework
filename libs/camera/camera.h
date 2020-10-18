@@ -22,7 +22,7 @@ Howto use:
 
  end with something like "
     glutDisplayFunc(display);
-	glutTimerFunc(100, gameLoop, 0);
+	glutTimerFunc(100, drawLoop, 0);
 //	glutFullScreen();
 	glutMainLoop();
  "
@@ -37,9 +37,9 @@ Howto use:
 	cam->toggleKeys(key,false);
     glutPostRedisplay();
  }
- void gameLoop(int n) {
-    cam->gameLoop();
-    glutTimerFunc(40, gameLoop, n);
+ void drawLoop(int n) {
+    cam->drawLoop();
+    glutTimerFunc(40, drawLoop, n);
  }
  "
 
@@ -87,10 +87,5 @@ public:
 	static void keyup(unsigned char key, int x, int y);
 	static void keydown(unsigned char key, int x, int y);
 };
-
-char* ReadFile(const char* filename);
-
-GLuint initShaders(const char* v_shader, const char* f_shader);
-
 
 #endif //OPENGL_CAMERA_HOLD

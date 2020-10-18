@@ -6,28 +6,29 @@
 class Sphere : public SimpleNode {
 	int subdivisions;
 	Point pt(double x, double y) {
+		//x wraps, y climbs
 		return point(
 				glm::sin((y / subdivisions) * (2 * M_PI)) * glm::cos(x * 2 * M_PI / subdivisions),
 				glm::sin((y / subdivisions) * (2 * M_PI)) * glm::sin(x * 2 * M_PI / subdivisions),
 				glm::cos((y / subdivisions) * (2 * M_PI)),
-				x,
-				y
+//				(glm::abs(1-2*x/subdivisions)) + (2*x/subdivisions<1?1:0),
+				x/subdivisions,
+				y/subdivisions*2
 		);
 	}
 	void genSphere() {
-		for (int r=0;r<subdivisions;r++) {
-			for (int i=0;i<subdivisions;i++) {
-				addTri(	pt(i,r),
-						pt(i,r+1),
-						pt(i+1,r));
-				addTri( pt(i,r+1),
-						pt(i+1,r),
-						pt(i+1,r+1));
+		for (int y=0;y<=subdivisions/2;y++) {
+			for (int x=0;x<subdivisions;x++) {
+				addTri(	pt(x, y),pt(x, y + 1),pt(x + 1, y));
+				addTri( pt(x, y + 1),pt(x + 1, y),pt(x + 1, y + 1));
 			}
 		}
 	}
 public:
-	Sphere(int subdivisions = 75) : SimpleNode() {
+	Sphere(int subdivisions = 74) : SimpleNode() {
+		//make sure it's even
+		if (!(subdivisions/2))subdivisions++;
+
 		this->subdivisions = subdivisions;
 		genSphere();
 		fillBuffers();

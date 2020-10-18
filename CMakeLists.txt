@@ -3,9 +3,10 @@ project(opengl)
 
 set(CMAKE_CXX_STANDARD 17)
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
 INCLUDE_DIRECTORIES(${BULLET_PHYSICS_SOURCE_DIR}/src)
 LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)
-
 
 #assmt 6
 #add_executable(opengl a6/Cube.cpp a6/main.cpp a6/Plane.cpp a6/roof.cpp)
@@ -29,7 +30,7 @@ LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)
 
 add_executable(opengl
         nonEuclidean/main.cpp
-        libs/camera/camera.cpp libs/node/Maze.h libs/Timer.h libs/node/Plane.h libs/node/PointMaze.h libs/node/Cube.h libs/node/Node.h libs/node/Drawable.h libs/node/Collidable.h libs/node/NodeVector.h libs/node/Portal.h libs/node/SimpleNode.h libs/node/Circle.h libs/node/Cylinder.h libs/player/GhostCameraController.h libs/player/CameraController.h libs/node/Orientable.h libs/node/Cube.h libs/node/TexturedNode.h)
+        libs/camera/camera.cpp libs/node/Maze.h libs/Timer.h libs/node/Plane.h libs/node/PointMaze.h libs/node/Cube.h libs/node/Node.h libs/node/Drawable.h libs/node/Collidable.h libs/node/NodeVector.h libs/node/Portal.h libs/node/SimpleNode.h libs/node/Circle.h libs/node/Cylinder.h libs/player/GhostCameraController.h libs/player/CameraController.h libs/node/Orientable.h libs/node/Cube.h libs/node/TexturedNode.h libs/node/QuarterBowl.h libs/node/NodeBuilder.h)
 
 #add_executable(opengl mazeGame/main.cpp camera/camera.cpp)
 # 499 Assmt 1/3a

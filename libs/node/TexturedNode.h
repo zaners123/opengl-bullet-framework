@@ -97,7 +97,7 @@ public:
 
 
 	SimpleNode() {
-		prog = initShaders("../libs/camera/NodeSimple.vs", "../libs/camera/NodeSimple.fs");
+		prog = loadShader("../libs/camera/SimpleTextured.vs", "../libs/camera/SimpleTextured.fs");
 		initBuffers();
 		clearTris();
 	}

@@ -23,17 +23,23 @@ public:
 		}
 	}
 
- 	bool push(Node* node) {
-		if (!world) {
-			std::cerr << "Physics world is not set for this NodeVector" << std::endl;
-			return false;
+	bool push(Node* node) {
+		return push(node,true);
+	}
+
+ 	bool push(Node* node, bool addToPhysicsWorld) {
+		if (addToPhysicsWorld) {
+			if (!world) {
+				std::cerr << "Physics world is not set for this NodeVector" << std::endl;
+				return false;
+			}
+			btRigidBody* rigidBody = node->getRigidBody();
+			if (!rigidBody) {
+				std::cerr << "Node hath no Body" << std::endl;
+				return false;
+			}
+			world->addRigidBody(rigidBody);
 		}
-	    btRigidBody* rigidBody = node->getRigidBody();
-	    if (!rigidBody) {
-		    std::cerr << "Node hath no Body" << std::endl;
-		    return false;
-	    }
-	    world->addRigidBody(rigidBody);
 	    children.push_back(node);
 	    return true;
  	}

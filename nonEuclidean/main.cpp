@@ -9,6 +9,7 @@
 #include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <LinearMath/btDefaultMotionState.h>
+#include <thread>
 //my stuff
 #include "../libs/camera/camera.h"
 #include "../libs/node/Maze.h"
@@ -16,6 +17,8 @@
 #include "../libs/Timer.h"
 #include "../libs/node/NodeVector.h"
 #include "../libs/node/Sphere.h"
+#include "../libs/node/QuarterBowl.h"
+#include "../libs/node/NodeBuilder.h"
 
 Camera* cam;
 NodeVector* rootNode;
@@ -35,47 +38,39 @@ void initBullet() {
 }
 
 void stepBullet() {
-	dynamicsWorld->stepSimulation(1.f/60.f,10);
+	dynamicsWorld->stepSimulation(1.f/60.f,1000);
 	rootNode->updateUsingRigidBody();
 }
 
 void setupRootNode() {
 	rootNode = new NodeVector();
 	rootNode->setPhysicsWorld(dynamicsWorld);
-	auto* c = new Sphere();
-	c->setFixed();
-	c->move(0,-50,0);
-//	c->setPos(glm::rotate(c->getPos(),(float)(M_PI/1.9f),glm::vec3(1,0,0)));
-	c->scale(50);
-	rootNode->push(c);
-
-	for (int i=0;i<1;i++) {
-		auto* s = new Sphere(5);
-		s->move(0,5+i*5,0);
-//		s->scale(50);
-		rootNode->push(s);
+	//make bowl
+	for (int i=0;i<4;i++) {
+		auto bowl = new QuarterBowl();
+		bowl->setFixed();
+		bowl->setTexture("../wood.jpeg");
+		bowl->move(0,-100,0);
+		bowl->scale(10);
+		bowl->setPos(glm::rotate(bowl->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
+		rootNode->push(bowl);
 	}
-
-	/*rootNode = new NodeVector();
-	rootNode->push(new Cube(true));
-	Node* portalFace = new Plane(true);
-		portalFace->setPos(glm::rotate(portalFace->getPos(), (float) (M_PI / 2.0f), glm::vec3(1, 0, 0)));
-		portalFace->scale(100);
-	//make portal
-	auto* outside = new NodeVector();
-	auto* inside = new NodeVector();
-	rootNode->push(new Portal(portalFace, inside, outside));
-	//make frame
-	outside->push((new Cube(true))->moveR(55, 0, 0)->scaleR(10,10,120));
-	outside->push((new Cube(true))->moveR(-55, 0, 0)->scaleR(10,10,120));
-	outside->push((new Cube(true))->moveR(0, 0, 55)->scaleR(100,10,10));
-	outside->push((new Cube(true))->moveR(0, 0, -55)->scaleR(100,10,10));
-	//put stuff outside
-	outside->push((new Cube(true))->moveR(50, 20, 0)->scaleR(10));
-	outside->push((new Cylinder(1000))->moveR(0,30,0)->scaleR(10));
-	//put stuff inside
-	inside->push((new Cube(true))->scaleR(10)->moveR(0,-10,0));
-	inside->push((new Sphere())->moveR(0,-5,0));*/
+	//make table
+	auto* table = NodeBuilder::start()
+			.setShape(NodeBuilder::cube)
+			->setTexture("../marble.jpg")
+			->build();
+	table->setFixed();
+	table->move(0,-161.0f,0);
+	table->scale(100,100,100);
+	rootNode->push(table);
+	//skybox
+	auto* skybox = NodeBuilder::start()
+			.setShape(NodeBuilder::sphere)
+			->setTexture("../sky.jpeg")
+			->build();
+	skybox->scale(3000);
+	rootNode->push(skybox,false);
 }
 
 void init() {
@@ -91,7 +86,6 @@ void init() {
 	setupRootNode();
 }
 
-//todo set up node system
 void drawRootNode() {
 	rootNode->draw(cam->getWVP());
 }
@@ -101,29 +95,48 @@ void display() {
 	fps.tick();
 //	glScissor(0,0,cam->windowX,cam->windowY);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-//	std::cout<<"DRAW ROOT"<<std::endl;
 	drawRootNode();
 	glFlush();
 //	glutPostRedisplay();
 }
 
 void onFrame() {
-	/*static int i = 0;
-	if (i++ > 10) {
-		i=0;*/
-		/*auto* s = new Sphere();
-		s->move(0,500,0);
-		s->setInstantaneousChangeInVelocity(0,-100,0);
-		rootNode->push(s);*/
-	/*}*/
+	//frame-logic, such as making a new object every 10 frames
+	static int i=0;
+	static int count=0;
+	if (i++>10) {
+		i=0;
+		auto* s = new Sphere();
+		int r = rand()%4;
+		if (r==0)s->setTexture("../appleTex2.jpg");
+		if (r==1)s->setTexture("../orange2.png");
+		if (r==2)s->setTexture("../green_apple.jpg");
+		if (r==3)s->setTexture("../mango.jpg");
+		s->move(rand()%10-5,-80+i*5,0);
+		s->scale(.5f);
+		rootNode->push(s);
+		count++;
+		if (count%100==0) {
+			std::cout<<"FRUIT:"<<count<<std::endl;
+		}
+	}
 }
 
-void gameLoop(int n) {
-	glutTimerFunc(20, gameLoop, n);
+void drawLoop(int n) {
+	glutTimerFunc(20, drawLoop, n);
 	cam->gameLoop();
-	stepBullet();
-	onFrame();
 	glutPostRedisplay();
+	onFrame();
+}
+
+void physicsLoop() {
+	stepBullet();
+}
+
+void physicsLoopThread() {
+	while(1) {
+		physicsLoop();
+	}
 }
 
 int main(int argc, char** argv) {
@@ -147,11 +160,14 @@ int main(int argc, char** argv) {
 	glutKeyboardUpFunc(cam->keyup);
 	glutReshapeFunc(cam->reshape);
 	glutPassiveMotionFunc(cam->rotateWorld);
+	glutDisplayFunc(display);
 	glutSetCursor(GLUT_CURSOR_NONE);
 	//other stuff
-	glutDisplayFunc(display);
-	glutTimerFunc(100, gameLoop, 0);
-	glutFullScreen();//todo fullscreen
+	glutTimerFunc(100, drawLoop, 0);
+	glutFullScreen();
+
+	std::thread physicsThread(physicsLoopThread);
+
 	glutMainLoop();
 	return 0;
 }
