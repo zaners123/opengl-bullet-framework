@@ -112,25 +112,24 @@ void onFrame() {
 
 	//todo uncomment this to spawn a fruit every frame
 
-	/*static int i=0;
+	static int i=0;
 	static int count=0;
-	if (i++>100) {
+	if (count<300 && i++>1) {
 		i=0;
 		auto* s = new Sphere();
-		int r = i%5;
-		if (r==0) s->setTexture("../appleTex2.jpg");
-		if (r==1) s->setTexture("../orange2.png");
-		if (r==2) s->setTexture("../green_apple.jpg");
-		if (r==3) s->setTexture("../mango.jpg");
-		if (r==4) s->setTexture("../lemon.png");
-		s->move(rand()%10-5,-80+i*5,rand()%10-5);
+		if (count%5==0) s->setTexture("../appleTex2.jpg");
+		if (count%5==1) s->setTexture("../orange2.png");
+		if (count%5==2) s->setTexture("../green_apple.jpg");
+		if (count%5==3) s->setTexture("../mango.jpg");
+		if (count%5==4) s->setTexture("../lemon.png");
+		s->move(rand()%10-5,580+i*5,rand()%10-5);
 		s->scale((((float)(rand()%1000))/1000)*3+1.0f);
 		rootNode->push(s);
 		count++;
 		if (count%100==0) {
 			std::cout<<"FRUIT:"<<count<<std::endl;
 		}
-	}*/
+	}
 }
 
 void physicsLoop(int n) {

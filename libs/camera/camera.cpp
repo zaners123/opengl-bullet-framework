@@ -5,7 +5,6 @@ int Camera::windowX,Camera::windowY;
 float Camera::cameraSpeed;//walking speed
 float Camera::mouseSensitivity = 0.001f;//spinning speed
 float Camera::rotSensitivity = 0.1f;//q and e screen rotate
-bool Camera::virt = false;//was mouse movement virtual? this stops the function from calling itself every like 0ms. Really just ignores every other mouse movement...
 float Camera::rot = 0;
 bool Camera::left,Camera::right,Camera::up,Camera::down,Camera::forward,Camera::backward,Camera::movRot,Camera::movCounterRot,Camera::boost,Camera::slow;
 float Camera::xAngle;//where mouse is pointed at, now in 3d!
@@ -54,6 +53,8 @@ void Camera::keydown(unsigned char key, int x, int y) {
 }
 
 void Camera::rotateWorld(int x, int y) {
+	//was mouse movement virtual? this stops the function from calling itself every like 0ms. Really just ignores every other mouse movement...
+	static bool virt = false;
 	//keep mouse in middle
 	if (!virt) glutWarpPointer(windowX/2,windowY/2);
 	virt = !virt;

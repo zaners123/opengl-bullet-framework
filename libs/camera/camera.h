@@ -47,14 +47,12 @@ add "
 "
  * */
 class Camera {
-public:
 	glm::vec3 location;
 	constexpr static float PI = 3.14159265358979323;
 	static int windowX,windowY;
 	static float cameraSpeed;//walking speed
 	static float mouseSensitivity;//spinning speed
 	static float rotSensitivity;//q and e screen rotate
-	static bool virt;//was mouse movement virtual? this stops the function from calling itself every like 0ms. Really just ignores every other mouse movement...
 	static float rot;
 	static bool left,right,up,down,forward,backward,movRot,movCounterRot,boost,slow;
 	static float xAngle;//where mouse is pointed at, now in 3d!
@@ -64,6 +62,7 @@ public:
 	static glm::vec3 cameraDirection;
 	static glm::vec3 cameraRight;
 	static glm::vec3 upVec;
+public:
 	Camera(int initW, int initH);
 
 	/**
