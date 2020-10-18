@@ -25,9 +25,9 @@ class Sphere : public SimpleNode {
 		}
 	}
 public:
-	Sphere(int subdivisions = 74) : SimpleNode() {
+	Sphere(int subdivisions = 54) : SimpleNode() {
 		//make sure it's even
-		if (!(subdivisions/2))subdivisions++;
+		if (!(subdivisions/2)) subdivisions++;
 
 		this->subdivisions = subdivisions;
 		genSphere();

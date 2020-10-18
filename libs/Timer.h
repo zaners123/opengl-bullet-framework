@@ -17,27 +17,21 @@ public:
 	}
 };
 class FPS {
-	double lastTime;
-	int nbFrames;
-	Timer t;
+	int nbFrames = 0;
+	Timer t = Timer();
 	double printAt;
 public:
 	FPS() {
-		lastTime = 0;
-		nbFrames = 0;
-		t = Timer();
 		printAt = t.getElapsed();
 	}
 	void tick() {
 		double currentTime = t.getElapsed();
 		nbFrames++;
-		if (printAt < currentTime) {
-			// printf and reset timer
-//			printf("%fFPS\n", double(nbFrames)/currentTime);
-			printf("%dFPS\n", nbFrames);
-			nbFrames=0;
-			printAt = currentTime+1;
-		}
+		if (printAt >= currentTime) return;
+//		printf("%fFPS\n", double(nbFrames)/currentTime);
+		printf("%dFPS\n", nbFrames);
+		nbFrames=0;
+		printAt = currentTime+1;
 	}
 };
 #endif //OPENGL_TIMER_H

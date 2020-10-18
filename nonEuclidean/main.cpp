@@ -37,11 +37,6 @@ void initBullet() {
 	dynamicsWorld->setGravity(btVector3(0.0f, -9.8f, 0.0f));
 }
 
-void stepBullet() {
-	dynamicsWorld->stepSimulation(1.f/60.f,1000);
-	rootNode->updateUsingRigidBody();
-}
-
 void setupRootNode() {
 	rootNode = new NodeVector();
 	rootNode->setPhysicsWorld(dynamicsWorld);
@@ -71,6 +66,18 @@ void setupRootNode() {
 			->build();
 	skybox->scale(3000);
 	rootNode->push(skybox,false);
+	//make fruit
+	for (int i=0;i<8;i++) {
+		auto* s = new Sphere();
+		int r = i%3;
+		if (r==0)s->setTexture("../appleTex2.jpg");
+		if (r==1)s->setTexture("../mango.jpg");
+		if (r==2)s->setTexture("../green_apple.jpg");
+//		if (r==3)s->setTexture("../orange2.png");
+		s->move(rand()%10-5,0+i*10,rand()%10-5);
+		s->scale(2.5f);
+		rootNode->push(s);
+	}
 }
 
 void init() {
@@ -102,9 +109,9 @@ void display() {
 
 void onFrame() {
 	//frame-logic, such as making a new object every 10 frames
-	static int i=0;
+	/*static int i=0;
 	static int count=0;
-	if (i++>10) {
+	if (i++>count) {
 		i=0;
 		auto* s = new Sphere();
 		int r = rand()%4;
@@ -113,13 +120,18 @@ void onFrame() {
 		if (r==2)s->setTexture("../green_apple.jpg");
 		if (r==3)s->setTexture("../mango.jpg");
 		s->move(rand()%10-5,-80+i*5,0);
-		s->scale(.5f);
+		s->scale((((float)(rand()%1000))/1000)*4+.1f);
 		rootNode->push(s);
 		count++;
 		if (count%100==0) {
 			std::cout<<"FRUIT:"<<count<<std::endl;
 		}
-	}
+	}*/
+}
+
+void physicsLoop() {
+	dynamicsWorld->stepSimulation(1.f/60.f);
+	rootNode->updateUsingRigidBody();
 }
 
 void drawLoop(int n) {
@@ -127,10 +139,6 @@ void drawLoop(int n) {
 	cam->gameLoop();
 	glutPostRedisplay();
 	onFrame();
-}
-
-void physicsLoop() {
-	stepBullet();
 }
 
 void physicsLoopThread() {
@@ -165,9 +173,7 @@ int main(int argc, char** argv) {
 	//other stuff
 	glutTimerFunc(100, drawLoop, 0);
 	glutFullScreen();
-
 	std::thread physicsThread(physicsLoopThread);
-
 	glutMainLoop();
 	return 0;
 }

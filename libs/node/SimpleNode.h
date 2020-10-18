@@ -57,17 +57,27 @@ public:
 	virtual void replaceRigidBody() override {
 		//physics
 		std::vector<btVector3> convexPoints;
+
+		int numTris = triangleData.size();
+		bool hugeMesh = numTris > 1024;
+
+		int divide = hugeMesh ? 3 : -1;
+		int i=0;
 		for(Triangle& t : triangleData) {
+			if (++i < divide) continue;
+			i=0;
 			glm::vec3 a = applyPosOnly(glm::vec3(t.pointA.x,t.pointA.y,t.pointA.z));
 			convexPoints.push_back(btVector3(a.x,a.y,a.z));
-			glm::vec3 b = applyPosOnly(glm::vec3(t.pointB.x,t.pointB.y,t.pointB.z));
-			convexPoints.push_back(btVector3(b.x,b.y,b.z));
-			glm::vec3 c = applyPosOnly(glm::vec3(t.pointC.x,t.pointC.y,t.pointC.z));
-			convexPoints.push_back(btVector3(c.x,c.y,c.z));
+			if (!hugeMesh) {
+				glm::vec3 b = applyPosOnly(glm::vec3(t.pointB.x,t.pointB.y,t.pointB.z));
+				convexPoints.push_back(btVector3(b.x,b.y,b.z));
+				glm::vec3 c = applyPosOnly(glm::vec3(t.pointC.x,t.pointC.y,t.pointC.z));
+				convexPoints.push_back(btVector3(c.x,c.y,c.z));
+			}
 		}
 		btConvexHullShape* shape = new btConvexHullShape(&convexPoints[0].getX(), convexPoints.size(), sizeof(btVector3));
-//		shape->optimizeConvexHull();
-//		shape->recalcLocalAabb();
+		shape->optimizeConvexHull();
+		shape->recalcLocalAabb();
 
 		btDefaultMotionState* ms = new btDefaultMotionState();
 		btVector3 inertia(0,0,0);
