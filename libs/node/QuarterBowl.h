@@ -27,7 +27,7 @@ public:
 	QuarterBowl(int subdivisions = 74) : SimpleNode() {
 		gen(subdivisions);
 		fillBuffers();
-		replaceRigidBody();
+//		replaceRigidBody();
 	}
 };
 #endif

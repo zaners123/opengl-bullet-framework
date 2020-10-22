@@ -28,7 +28,7 @@ public:
 	Cube() : SimpleNode() {
 		gen();
 		fillBuffers();
-		replaceRigidBody();
+//		replaceRigidBody();
 	}
 };
 #endif

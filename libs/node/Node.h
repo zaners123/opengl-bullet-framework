@@ -52,7 +52,7 @@ public:
 		com.y = y;
 		com.z = z;
 		btTransform tmp = rb->getCenterOfMassTransform();
-		tmp.setOrigin(btVector3(tmp.getOrigin().x()+x,tmp.getOrigin().y()+y,tmp.getOrigin().z()+z));
+		tmp.setOrigin(btVector3(x,y,z));
 		rb->setCenterOfMassTransform(tmp);
 	}
 
@@ -70,7 +70,18 @@ public:
 
 	virtual void setMass(const btScalar mass) {
 		this->mass = mass;
-		replaceRigidBody();
+//		replaceRigidBody();
+	}
+
+	bool built = false;
+	virtual void attemptReplaceRigidBody() {
+		if (built) {
+			replaceRigidBody();
+		}
+	}
+
+	void setBuilt(bool built) {
+		this->built = built;
 	}
 
 	/**

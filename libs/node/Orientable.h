@@ -17,7 +17,7 @@
 class Orientable {
 public:
 	Orientable() {
-		replaceRigidBody();
+//		replaceRigidBody();
 	}
 
 	glm::mat4 pos = glm::mat4(1);
@@ -44,6 +44,11 @@ public:
 
 	virtual void setPos(const glm::mat4& pos) {
 		this->pos = pos;
+		replaceRigidBody();
+	}
+
+	virtual void build() {
+		//remeshes, etc
 		replaceRigidBody();
 	}
 

@@ -22,11 +22,13 @@ public:
 		cube,
 		cylinder,
 		sphere,
+		quarterBowl,
 	};
 
 	//building data
 	Shape shape = undefined;
 	char* texture = nullptr;
+	btScalar mass = 1;
 
 	NodeBuilder() {
 
@@ -36,7 +38,7 @@ public:
 		return NodeBuilder();
 	}
 
-	SimpleNode* build() {
+	SimpleNode* build() const {
 		SimpleNode* ret;
 		switch(shape) {
 			case undefined:return nullptr;
@@ -44,13 +46,26 @@ public:
 			case cube:ret = new Cube();break;
 			case cylinder:ret = new Cylinder();break;
 			case sphere:ret = new Sphere();break;
+			case quarterBowl:ret=new QuarterBowl();break;
 		}
 		ret->setTexture(texture);
+		ret->setMass(mass);
+		ret->build();
 		return ret;
 	}
 
+	NodeBuilder* setMass(btScalar mass) {
+		this->mass=mass;
+		return this;
+	}
+
+	NodeBuilder* setFixed() {
+		this->mass=0;
+		return this;
+	}
+
 	NodeBuilder* setShape(Shape shape) {
-		this->shape = shape;
+		this->shape=shape;
 		return this;
 	}
 
@@ -60,4 +75,4 @@ public:
 		return this;
 	}
 };
-#endif //OPENGL_NODEBUILDER_H
+#endif

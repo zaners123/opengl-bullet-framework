@@ -42,10 +42,14 @@ void setupRootNode() {
 	rootNode->setPhysicsWorld(dynamicsWorld);
 	//make bowl
 	for (int i=0;i<4;i++) {
-		auto bowl = new QuarterBowl();
-		bowl->setFixed();
-		bowl->setTexture("../wood.jpeg");
-		bowl->move(0,-100,0);
+		auto* bowl = NodeBuilder::start()
+				.setShape(NodeBuilder::quarterBowl)
+				->setFixed()
+				->setTexture("../wood.jpeg")
+				->build();
+		bowl->setCOM(0,-100,0);
+		bowl->setCOM(0,-100,0);
+		bowl->setCOM(0,-100,0);
 		bowl->scale(10);
 		bowl->setPos(glm::rotate(bowl->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
 		rootNode->push(bowl);
@@ -54,8 +58,8 @@ void setupRootNode() {
 	auto* table = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
 			->setTexture("../marble.jpg")
+			->setFixed()
 			->build();
-	table->setFixed();
 	table->move(0,-161.0f,0);
 	table->scale(100,100,100);
 	rootNode->push(table);
@@ -68,14 +72,17 @@ void setupRootNode() {
 	rootNode->push(skybox,false);
 	//make fruit
 	for (int i=0;i<8;i++) {
+
 		auto* s = new Sphere();
 		int r = i%3;
 		if (r==0)s->setTexture("../appleTex2.jpg");
 		if (r==1)s->setTexture("../mango.jpg");
 		if (r==2)s->setTexture("../green_apple.jpg");
 //		if (r==3)s->setTexture("../orange2.png");
+		s->build();
 		s->move(rand()%10-5,0+i*10,rand()%10-5);
 		s->scale(2.5f);
+		s->build();
 		rootNode->push(s);
 	}
 }
@@ -122,8 +129,12 @@ void onFrame() {
 		if (count%5==2) s->setTexture("../green_apple.jpg");
 		if (count%5==3) s->setTexture("../mango.jpg");
 		if (count%5==4) s->setTexture("../lemon.png");
+		s->build();
 		s->move(rand()%10-5,580+i*5,rand()%10-5);
 		s->scale((((float)(rand()%1000))/1000)*3+1.0f);
+		s->setMass(i+5);
+		s->scale(1);
+		s->build();
 		rootNode->push(s);
 		count++;
 		if (count%100==0) {
