@@ -40,7 +40,9 @@ Due to this node hierarchy, extending from it is simple. The node hierarchy has 
 
 Currently, all fruit is given the same mass, but it could be set simply by calling something like setMass(100)
 
-## Setting up the BulletPhysics World
+## BulletPhysics
+
+BulletPhysics helped me achieve this assignment's goals because it allowed me to achieve complex solutions, such as collisions, acceleration, and rolling, without having to "reinvent the wheel" by programming these myself.  
 
 The BulletPhysics world is made by a default physics environment with -9.8m/s gravity. Around 60 times per second, this physics world discretely updates (objects fall, bounce, roll, etc), then all of the Nodes' positions (location and orientation) are updated reflecting the new locations.
 
