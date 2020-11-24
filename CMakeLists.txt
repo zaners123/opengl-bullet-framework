@@ -17,7 +17,7 @@ LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)
 add_executable(opengl
         nonEuclidean/main.cpp
         libs/camera/camera.cpp
-        libs/node/Maze.h libs/Timer.h libs/node/Plane.h libs/node/PointMaze.h libs/node/Cube.h libs/node/Node.h libs/node/Drawable.h libs/node/Collidable.h libs/node/NodeVector.h libs/node/Portal.h libs/node/SimpleNode.h libs/node/Circle.h libs/node/Cylinder.h libs/node/Orientable.h libs/node/Cube.h libs/node/TexturedNode.h libs/node/QuarterBowl.h libs/node/NodeBuilder.h
+        libs/node/Maze.h libs/Timer.h libs/node/Plane.h libs/node/PointMaze.h libs/node/Cube.h libs/node/Node.h libs/node/Drawable.h libs/node/Collidable.h libs/node/NodeVector.h libs/node/Portal.h libs/node/SimpleNode.h libs/node/Circle.h libs/node/Cylinder.h libs/node/Orientable.h libs/node/Cube.h libs/node/TexturedNode.h libs/node/QuarterBowl.h libs/node/NodeBuilder.h libs/node/Tree.h
         )
 
 #add_executable(opengl mazeGame/main.cpp camera/camera.cpp)

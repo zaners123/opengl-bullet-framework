@@ -7,6 +7,8 @@
 #include "Sphere.h"
 #include "Cube.h"
 #include "Cylinder.h"
+#include "Plane.h"
+#include "Tree.h"
 
 /**
  * TODO plan is for all nodes to be constructed in here
@@ -23,6 +25,8 @@ public:
 		cylinder,
 		sphere,
 		quarterBowl,
+		plane,
+		tree,
 	};
 
 	//building data
@@ -47,6 +51,8 @@ public:
 			case cylinder:ret = new Cylinder();break;
 			case sphere:ret = new Sphere();break;
 			case quarterBowl:ret=new QuarterBowl();break;
+			case plane:ret=new Plane();break;
+			case tree:ret=new Tree();break;
 		}
 		ret->setTexture(texture);
 		ret->setMass(mass);

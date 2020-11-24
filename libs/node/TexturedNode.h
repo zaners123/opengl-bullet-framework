@@ -87,7 +87,7 @@ public:
 		triangleData.push_back(tri);
 	}
 
-	void addTri(GLfloat ax, GLfloat ay, GLfloat az, GLfloat bx, GLfloat by, GLfloat bz, GLfloat cx, GLfloat cy, GLfloat cz) {
+	void addFractalTri(GLfloat ax, GLfloat ay, GLfloat az, GLfloat bx, GLfloat by, GLfloat bz, GLfloat cx, GLfloat cy, GLfloat cz) {
 		Triangle tri;
 		tri.pointA.x=ax;tri.pointA.y=ay;tri.pointA.z=az;
 		tri.pointB.x=bx;tri.pointB.y=by;tri.pointB.z=bz;

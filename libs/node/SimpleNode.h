@@ -21,9 +21,41 @@
  * */
 class SimpleNode : public Node {
 public:
-	struct Point {
+	class Point {
+	public:
 		GLfloat x,y,z;
 		GLfloat texX = 0, texY = 0;
+		Point rotate(GLfloat rx, GLfloat ry, GLfloat rz) {
+			glm::mat4 rot = glm::mat4(1);
+			rot = glm::rotate(rot, rx,glm::vec3(1,0,0));
+			rot = glm::rotate(rot, ry,glm::vec3(0,1,0));
+			rot = glm::rotate(rot, rz,glm::vec3(0,0,1));
+
+			glm::vec4 tmp = glm::vec4(x,y,z,1);
+			Point ret;
+			tmp = tmp * rot;
+			ret.x=tmp.x;
+			ret.y=tmp.y;
+			ret.z=tmp.z;
+			ret.texX = texX;
+			ret.texY = texY;
+			return ret;
+		}
+		Point& operator += (const Point &that) {
+			x += that.x;
+			y += that.y;
+			z += that.z;
+			return *this;
+		}
+		Point operator + (const Point &that) {
+			Point ret;
+			ret.x = this->x + that.x;
+			ret.y = this->y + that.y;
+			ret.z = this->z + that.z;
+			ret.texX = this->texX;
+			ret.texY = this->texY;
+			return ret;
+		}
 	};
 	struct Triangle {
 		Point pointA;
@@ -35,6 +67,7 @@ private:
 	bool textured;
 	GLuint imageTexture = 0;
 	std::vector<Triangle> triangleData;
+	std::vector<glm::vec3> instanceData;
 
 	int getNumVerts() {
 		return triangleData.size()*3;
@@ -45,6 +78,7 @@ private:
 		glGenBuffers(1, &vbo);
 	}
 public:
+
 	static Point point(GLfloat x, GLfloat y, GLfloat z, GLfloat texX, GLfloat texY) {
 		Point p;
 		p.x = x;
@@ -52,6 +86,15 @@ public:
 		p.z = z;
 		p.texX = texX;
 		p.texY = texY;
+		return p;
+	}
+	static Point point(GLfloat x, GLfloat y, GLfloat z) {
+		Point p;
+		p.x = x;
+		p.y = y;
+		p.z = z;
+		p.texX = 0;
+		p.texY = 0;
 		return p;
 	}
 	virtual void replaceRigidBody() override {
@@ -117,19 +160,49 @@ public:
 		clearTris();
 	}
 
-	void setTexture(const char* texture) {
-		if (texture) {
-			if (!textured) {
-				glDeleteProgram(prog);
-				prog = loadShader("../libs/node/shader/SimpleTextured.vs", "../libs/node/shader/SimpleTextured.fs");
+	bool getIsInstanced() {
+		return !instanceData.empty();
+	}
+
+	/**Sets shader (based on state of isTextured() and getIsInstanced()
+	 * @see SimpleNode::isTextured()
+	 * @see SimpleNode::getIsInstanced()
+	 * */
+	void updateShader() {
+		//test if prog already set?
+		glDeleteProgram(prog);
+		if (getIsInstanced()) {
+			if (isTextured()) {
+				prog = loadShader("../libs/node/shader/InstancedTextured.vs", "../libs/node/shader/InstancedTextured.fs");
+			} else {
+				prog = loadShader("../libs/node/shader/InstancedColored.vs", "../libs/node/shader/InstancedColored.fs");
 			}
+		} else {
+			if (isTextured()) {
+				prog = loadShader("../libs/node/shader/SimpleTextured.vs", "../libs/node/shader/SimpleTextured.fs");
+			} else {
+				prog = loadShader("../libs/node/shader/SimpleColored.vs", "../libs/node/shader/SimpleColored.fs");
+			}
+		}
+	}
+
+	void setIsInstanced(bool isInstanced) {
+		//set shader
+		if (!isInstanced) instanceData.clear();
+		updateShader();
+	}
+
+	bool isTextured() {
+		return textured;
+	}
+
+	void setTexture(const char* texture) {
+		textured = texture?true:false;
+		updateShader();
+		if (texture) {
 			glUniform1i(glGetUniformLocation(prog, "Tex1"), 0);
 			glActiveTexture(GL_TEXTURE0);
 			imageTexture = loadTexture(texture);
-			textured = true;
-		} else {
-			textured = false;
-			prog = loadShader("../libs/node/shader/SimpleColored.vs", "../libs/node/shader/SimpleColored.fs");
 		}
 	}
 
@@ -166,7 +239,20 @@ public:
 			glBindTexture(GL_TEXTURE_2D, imageTexture);
 		}
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, getNumVerts());
+		if (getIsInstanced()) {
+			glDrawArraysInstanced(GL_TRIANGLES, 0, getNumVerts(), instanceData.size());
+		} else {
+			glDrawArrays(GL_TRIANGLES, 0, getNumVerts());
+		}
 	}
+
+	/**
+	 * Turns this SimpleNode into a fixed, instanced, node. Replaces program with instanced one
+	 * */
+	void addInstance(glm::vec3 loc) {
+		instanceData.push_back(loc);
+		if (instanceData.size()==1) setIsInstanced(true);
+	}
+
 };
 #endif

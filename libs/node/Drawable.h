@@ -13,7 +13,7 @@ protected:
 	GLuint  vbo;
 	GLuint  ebo;
 	GLuint  tex;
-	GLuint prog;
+	GLuint prog = 0;
 public:
 	Drawable() = default;
 	~Drawable() = default;

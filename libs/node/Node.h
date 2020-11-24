@@ -56,6 +56,10 @@ public:
 		rb->setCenterOfMassTransform(tmp);
 	}
 
+	virtual void rotate(GLfloat x, GLfloat y, GLfloat z) {
+		//todo
+	}
+
 	virtual void move(GLfloat x, GLfloat y, GLfloat z) {
 		setCOM(com.x + x,com.y + y,com.z + z);
 	}
@@ -107,5 +111,4 @@ public:
 		drawDrawable(applyPos(wvp));
 	}
 };
-
 #endif //OPENGL_NODE_H

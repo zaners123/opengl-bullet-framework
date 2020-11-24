@@ -37,15 +37,21 @@ void initBullet() {
 	dynamicsWorld->setGravity(btVector3(0.0f, -9.8f, 0.0f));
 }
 
-void setupRootNode() {
-	rootNode = new NodeVector();
-	rootNode->setPhysicsWorld(dynamicsWorld);
+void orchard() {
+	//make tree
+	auto* tree = NodeBuilder::start()
+			.setShape(NodeBuilder::tree)
+			->setTexture("../resource/image/wood.jpeg")
+//			->setFixed()
+			->build();
+	rootNode->push(tree);
+
 	//make bowl
-	for (int i=0;i<4;i++) {
+	/*for (int i=0;i<4;i++) {
 		auto* bowl = NodeBuilder::start()
 				.setShape(NodeBuilder::quarterBowl)
 				->setFixed()
-				->setTexture("../wood.jpeg")
+				->setTexture("../resource/image/wood.jpeg")
 				->build();
 		bowl->setCOM(0,-100,0);
 		bowl->setCOM(0,-100,0);
@@ -53,21 +59,22 @@ void setupRootNode() {
 		bowl->scale(10);
 		bowl->setPos(glm::rotate(bowl->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
 		rootNode->push(bowl);
-	}
+	}*/
 	//make table
 	auto* table = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
-			->setTexture("../marble.jpg")
+			->setTexture("../resource/image/grass2.png")
 			->setFixed()
 			->build();
 	table->move(0,-161.0f,0);
-	table->scale(100,100,100);
+	table->scale(1000,100,1000);
 	rootNode->push(table);
 	//skybox
-	auto* skybox = NodeBuilder::start()
+	/*auto* skybox = NodeBuilder::start()
 			.setShape(NodeBuilder::sphere)
-			->setTexture("../sky.jpeg")
+			->setTexture("../resource/image/sky.jpeg")
 			->build();
+	skybox->rotate(M_PI,0,0);
 	skybox->scale(3000);
 	rootNode->push(skybox,false);
 	//make fruit
@@ -75,16 +82,47 @@ void setupRootNode() {
 
 		auto* s = new Sphere();
 		int r = i%3;
-		if (r==0)s->setTexture("../appleTex2.jpg");
-		if (r==1)s->setTexture("../mango.jpg");
-		if (r==2)s->setTexture("../green_apple.jpg");
+		if (r==0)s->setTexture("../resource/image/appleTex2.jpg");
+		if (r==1)s->setTexture("../resource/image/green_apple.jpg");
+		if (r==2)s->setTexture("../resource/image/appleB.jpg");
+//		if (r==2)s->setTexture("../mango.jpg");
 //		if (r==3)s->setTexture("../orange2.png");
 		s->build();
 		s->move(rand()%10-5,0+i*10,rand()%10-5);
 		s->scale(2.5f);
 		s->build();
 		rootNode->push(s);
-	}
+	}*/
+}
+void orchardFrame() {
+	static int i=0;
+	static int count=0;
+	/*if (count<300 && i++>1) {
+		i=0;
+		auto* s = new Sphere();
+		if (count%3==0) s->setTexture("../resource/image/appleTex2.jpg");
+		if (count%3==1) s->setTexture("../resource/image/appleB.jpg");
+		if (count%3==2) s->setTexture("../resource/image/green_apple.jpg");
+//		if (count%5==3) s->setTexture("../orange2.png");
+//		if (count%5==4) s->setTexture("../lemon.png");
+		s->build();
+		s->move(rand()%10-5,580+i*5,rand()%10-5);
+		s->scale((((float)(rand()%1000))/1000)*3+1.0f);
+		s->setMass(i+5);
+		s->scale(1);
+		s->build();
+		rootNode->push(s);
+		count++;
+		if (count%100==0) {
+			std::cout<<"FRUIT:"<<count<<std::endl;
+		}
+	}*/
+}
+
+void setupRootNode() {
+	rootNode = new NodeVector();
+	rootNode->setPhysicsWorld(dynamicsWorld);
+	orchard();
 }
 
 void init() {
@@ -116,31 +154,7 @@ void display() {
 
 void onFrame() {
 	//frame-logic, such as making a new object every 10 frames
-
-	//todo uncomment this to spawn a fruit every frame
-
-	static int i=0;
-	static int count=0;
-	if (count<300 && i++>1) {
-		i=0;
-		auto* s = new Sphere();
-		if (count%5==0) s->setTexture("../appleTex2.jpg");
-		if (count%5==1) s->setTexture("../orange2.png");
-		if (count%5==2) s->setTexture("../green_apple.jpg");
-		if (count%5==3) s->setTexture("../mango.jpg");
-		if (count%5==4) s->setTexture("../lemon.png");
-		s->build();
-		s->move(rand()%10-5,580+i*5,rand()%10-5);
-		s->scale((((float)(rand()%1000))/1000)*3+1.0f);
-		s->setMass(i+5);
-		s->scale(1);
-		s->build();
-		rootNode->push(s);
-		count++;
-		if (count%100==0) {
-			std::cout<<"FRUIT:"<<count<<std::endl;
-		}
-	}
+	orchardFrame();
 }
 
 void physicsLoop(int n) {
