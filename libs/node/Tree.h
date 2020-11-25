@@ -31,7 +31,7 @@ class Tree : public SimpleNode {
 		return point(
 				 glm::cos(a * 2 * M_PI / sd),
 				 glm::sin(b * 2 * M_PI / sd),
-				(c / sd),(c/sd),glm::sin(b * 2 * M_PI / sd)
+				 c,c,glm::sin(b * 2 * M_PI/sd)
 		);
 	}
 	void cylinder() {
@@ -48,7 +48,7 @@ class Tree : public SimpleNode {
 			}
 		}
 		//ring
-		for (int ring=0; ring < subdivisions; ring++) {
+		for (int ring=0; ring < 1; ring++) {
 			for (int i=0; i < subdivisions; i++) {
 				addFractalTri(pt(i, i, ring, subdivisions),
 				              pt(i, i, ring + 1, subdivisions),
@@ -80,8 +80,7 @@ public:
 
 		//shrink lengths as distance grows
 		h *= .8f;
-		r *= .8f;
-
+		r *= .6f;
 
 		GLfloat turn = M_PI / 4;
 		for (int i=0;i<5;i++)
@@ -92,9 +91,7 @@ public:
 			        turn * rand_neghalf_half(),
 			        turn * rand_neghalf_half()
 	        		),
-			    r,
-			    h,
-			    depth-1);
+			    r,h,depth-1);
 	}
 
 	explicit Tree(int subdivisions = 25) : SimpleNode() {

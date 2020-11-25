@@ -16,8 +16,6 @@
 #include "../libs/node/Cube.h"
 #include "../libs/Timer.h"
 #include "../libs/node/NodeVector.h"
-#include "../libs/node/Sphere.h"
-#include "../libs/node/QuarterBowl.h"
 #include "../libs/node/NodeBuilder.h"
 
 Camera* cam;
@@ -44,6 +42,12 @@ void orchard() {
 			->setTexture("../resource/image/wood.jpeg")
 //			->setFixed()
 			->build();
+	int trees = 100;
+	int spacing = 150;
+	for (int i=0;i<trees;i++) {
+		tree->addInstance(glm::vec3(i/glm::sqrt(trees)*spacing,0,(i%((int)glm::sqrt(trees)))*spacing));
+	}
+	tree->fillBuffers();
 	rootNode->push(tree);
 
 	//make bowl
@@ -63,10 +67,10 @@ void orchard() {
 	//make table
 	auto* table = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
-			->setTexture("../resource/image/grass2.png")
+			->setTexture("../resource/image/grass.jpg")
 			->setFixed()
 			->build();
-	table->move(0,-161.0f,0);
+	table->move(0,-50.0f,0);
 	table->scale(1000,100,1000);
 	rootNode->push(table);
 	//skybox

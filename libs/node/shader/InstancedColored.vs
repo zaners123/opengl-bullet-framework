@@ -1,7 +1,9 @@
 #version 430 core
 /**
 
-Used to print something with a vertex location and no texture.
+Used to print something with a vertex location and no texture
+
+Also, it's instanced
 
 */
 uniform mat4 wvp;

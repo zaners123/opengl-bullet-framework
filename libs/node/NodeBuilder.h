@@ -9,6 +9,7 @@
 #include "Cylinder.h"
 #include "Plane.h"
 #include "Tree.h"
+#include "QuarterBowl.h"
 
 /**
  * TODO plan is for all nodes to be constructed in here

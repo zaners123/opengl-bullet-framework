@@ -74,7 +74,7 @@ public:
 
 	virtual void setMass(const btScalar mass) {
 		this->mass = mass;
-//		replaceRigidBody();
+		replaceRigidBody();
 	}
 
 	bool built = false;

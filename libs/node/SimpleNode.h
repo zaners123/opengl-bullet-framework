@@ -130,6 +130,7 @@ public:
 		rb->setRollingFriction(0.4f);
 		rb->setSpinningFriction(0.4f);
 	}
+
 	void addTri(Point a, Point b, Point c) {
 		Triangle tri;
 		tri.pointA = a;
@@ -137,6 +138,7 @@ public:
 		tri.pointC = c;
 		triangleData.push_back(tri);
 	}
+
 	void addTri(GLfloat ax, GLfloat ay, GLfloat az, GLfloat bx, GLfloat by, GLfloat bz, GLfloat cx, GLfloat cy, GLfloat cz) {
 		Triangle tri;
 		tri.pointA.x=ax;tri.pointA.y=ay;tri.pointA.z=az;
@@ -144,6 +146,7 @@ public:
 		tri.pointC.x=cx;tri.pointC.y=cy;tri.pointC.z=cz;
 		triangleData.push_back(tri);
 	}
+
 	void addTri(
 			GLfloat ax, GLfloat ay, GLfloat az, GLfloat atx, GLfloat aty,
 			GLfloat bx, GLfloat by, GLfloat bz, GLfloat btx, GLfloat bty,
@@ -154,6 +157,7 @@ public:
 		tri.pointC.x=cx;tri.pointC.y=cy;tri.pointC.z=cz;tri.pointC.texX=ctx;tri.pointC.texY=cty;
 		triangleData.push_back(tri);
 	}
+
 	SimpleNode() {
 		setTexture(nullptr);
 		initBuffers();
@@ -169,7 +173,7 @@ public:
 	 * @see SimpleNode::getIsInstanced()
 	 * */
 	void updateShader() {
-		//test if prog already set?
+		//todo test if prog already set? This might delete other progs?
 		glDeleteProgram(prog);
 		if (getIsInstanced()) {
 			if (isTextured()) {
@@ -187,8 +191,11 @@ public:
 	}
 
 	void setIsInstanced(bool isInstanced) {
-		//set shader
-		if (!isInstanced) instanceData.clear();
+		if (isInstanced) {
+			setFixed();
+		} else {
+			instanceData.clear();
+		}
 		updateShader();
 	}
 
@@ -211,23 +218,41 @@ public:
 		fillBuffers();
 	}
 
+	/**
+	 * Call after adding new triangles / instances
+	 * */
 	void fillBuffers() {
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-		glBufferData(GL_ARRAY_BUFFER, triangleData.size() * sizeof(Triangle), &triangleData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER,
+			   instanceData.size() * sizeof(glm::vec3) + triangleData.size() * sizeof(Triangle),
+			   &triangleData[0], GL_STATIC_DRAW);
 
 		GLsizei stride = 5*sizeof(GLfloat);
-		void* textureOffset = (void*)(3*sizeof(GLfloat));
 
-		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+		void* offset = 0;
+
+		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, stride, offset);
 		glEnableVertexAttribArray(0);  // Position data
 
-		glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, stride, 0);
-		glEnableVertexAttribArray(1); // Color data
+//		glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, stride, offset);
+//		glEnableVertexAttribArray(1); // Color data
 
-		glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, stride, textureOffset);
+		//texture offset (texture is weaved with color/position data)
+		offset = (GLfloat*)offset + 3;
+
+		glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, stride, offset);
 		glEnableVertexAttribArray(2); // Texture Data
+
+		if (getIsInstanced()) {
+			offset = (Triangle *) (triangleData.size()* sizeof(Triangle));
+			//main instance storage
+			glBufferSubData(GL_ARRAY_BUFFER, (unsigned long) offset, sizeof(glm::vec3) * instanceData.size(), &instanceData[0]);
+			glVertexAttribPointer(3, 3, GL_FLOAT/*?*/, GL_FALSE, 0, (GLvoid *) offset);
+			glEnableVertexAttribArray(3);//instance data
+			glVertexAttribDivisor(3, 1);// new position every time
+		}
 
 		glBindVertexArray(0);
 	}
