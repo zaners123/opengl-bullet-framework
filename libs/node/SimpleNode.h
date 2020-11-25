@@ -275,6 +275,9 @@ public:
 	 * Turns this SimpleNode into a fixed, instanced, node. Replaces program with instanced one
 	 * */
 	void addInstance(glm::vec3 loc) {
+		/*todo why is this necessary?*/
+		loc*=2;
+
 		instanceData.push_back(loc);
 		if (instanceData.size()==1) setIsInstanced(true);
 	}
