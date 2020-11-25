@@ -83,7 +83,7 @@ public:
 		r *= .6f;
 
 		GLfloat turn = M_PI / 4;
-		for (int i=0;i<5;i++)
+		for (int i=0;i<rand()%4+3;i++)
 			fractal(
 				base,
 	        rot + point(

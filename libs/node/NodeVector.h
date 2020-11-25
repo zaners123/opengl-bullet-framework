@@ -23,11 +23,26 @@ public:
 		}
 	}
 
-	bool push(Node* node) {
-		return push(node,true);
+	/**Remove node from NodeVector. Returns true on success
+	 * @param Node node - node in NodeVector to remove
+	 * @return true if found & removed
+	 * */
+	bool remove(Node* node) {
+		if (node==nullptr) return false;
+		auto toErase=std::find(children.begin(), children.end(), node);
+		if (!(toErase != children.end())) return false;
+		//if (*toErase != nullptr) delete *toErase ;
+		children.erase(toErase);
+		return true;
 	}
 
- 	bool push(Node* node, bool addToPhysicsWorld) {
+	/**Pushes Node to NodeVector
+	 * @returns true on success. False on error
+	 *      Error could be from:
+	 *          If addToPhysicsWorld=true but you didn't set the physics world
+	 *          If you didn't give the Node node a RigidBody
+	 * */
+ 	bool push(Node* node, bool addToPhysicsWorld = true) {
 		if (addToPhysicsWorld) {
 			if (!world) {
 				std::cerr << "Physics world is not set for this NodeVector" << std::endl;

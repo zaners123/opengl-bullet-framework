@@ -47,13 +47,14 @@ public:
 		));
 	}
 
-	virtual void setCOM(GLfloat x, GLfloat y, GLfloat z) {
-		com.x = x;
-		com.y = y;
-		com.z = z;
+	virtual void setCOM(glm::vec3 newCom) {
+		this->com = newCom;
 		btTransform tmp = rb->getCenterOfMassTransform();
-		tmp.setOrigin(btVector3(x,y,z));
+		tmp.setOrigin(btVector3(newCom.x, newCom.y, newCom.z));
 		rb->setCenterOfMassTransform(tmp);
+	}
+	virtual void setCOM(GLfloat x, GLfloat y, GLfloat z) {
+		setCOM(glm::vec3(x,y,z));
 	}
 
 	virtual void rotate(GLfloat x, GLfloat y, GLfloat z) {
@@ -73,6 +74,7 @@ public:
 	}
 
 	virtual void setMass(const btScalar mass) {
+		if (this->mass == mass) return;
 		this->mass = mass;
 		replaceRigidBody();
 	}
@@ -97,6 +99,31 @@ public:
 			return false;
 		}
 		rb->setLinearVelocity(btVector3(x,y,z) - rb->getLinearVelocity());
+		return true;
+	}
+
+	/**
+	 * Sets linear velocity
+	 * */
+	virtual bool setLinearVelocity(btScalar x, btScalar y, btScalar z) {
+		if (!rb) {
+			std::cerr<<"setLinearVelocity caled on null rigidbody"<<std::endl;
+			return false;
+		}
+		rb->setLinearVelocity(btVector3(x,y,z));
+		return true;
+	}
+
+	/**
+	 * Sets linear velocity
+	 * */
+	virtual bool setAngularVelocity(btScalar x, btScalar y, btScalar z) {
+		if (!rb) {
+			std::cerr<<"setAngularVelocity caled on null rigidbody"<<std::endl;
+			return false;
+		}
+		rb->setAngularVelocity(btVector3(x,y,z));
+		return true;
 	}
 
 	/**
@@ -107,7 +134,7 @@ public:
 	}
 
 	/**Call to draw a node. This makes the Drawable/Orientable integration*/
-	void const draw(glm::mat4 wvp) {
+	void draw(glm::mat4 wvp) {
 		drawDrawable(applyPos(wvp));
 	}
 };
