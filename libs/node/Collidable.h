@@ -3,6 +3,7 @@
 
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
+#include <iostream>
 
 /**
  * A collidable object has an internal btRigidBody, so it can collide with other objects
@@ -14,9 +15,18 @@ public:
 	btRigidBody* rb=0;
 
 	virtual void setRigidBody(btRigidBody* rbNew) {
+
+		if (!rbNew) {
+			std::cerr<<"setRigidBody called with nullptr"<<std::endl;
+			return;
+		}
+
 		if (rb) {
 			btTransform tmp = rb->getCenterOfMassTransform();
-			delete rb;
+
+			//todo neatly remove from the planet
+//			delete rb;
+
 			rb = rbNew;
 			rb->setCenterOfMassTransform(tmp);
 		} else {

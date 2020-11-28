@@ -9,7 +9,7 @@ public:
 		return point(
 				glm::cos(a * 2 * M_PI / sd) * (1-c),
 				glm::sin(b * 2 * M_PI / sd) * (1-c),
-				c,0,0
+				c,c,glm::sin(b * 2 * M_PI/sd)
 		);
 	}
 private:
@@ -26,27 +26,21 @@ private:
 		}
 	}
 public:
-	explicit Cone(int subdivisions = 75) : SimpleNode() {
+	explicit Cone(int subdivisions = 75, bool drawBottom = true) : SimpleNode() {
 		//bottom
-		for (int i=0;i<subdivisions;i++) {
-			addTri(
-					0, 0, 0,
-					glm::cos(2 * M_PI * i / subdivisions), glm::sin(2 * M_PI * i / subdivisions), 0,
-					glm::cos(2 * M_PI * (i + 1) / subdivisions), glm::sin(2 * M_PI * (i + 1) / subdivisions), 0
-			);
+		if (drawBottom) {
+			for (int i=0;i<subdivisions;i++) {
+				addTri(
+						0, 0, 0,
+						glm::cos(2 * M_PI * i / subdivisions), glm::sin(2 * M_PI * i / subdivisions), 0,
+						glm::cos(2 * M_PI * (i + 1) / subdivisions), glm::sin(2 * M_PI * (i + 1) / subdivisions), 0
+						);
+			}
 		}
 		//ring
 		genRing(subdivisions);
-		//top
-		for (int i=0;i<subdivisions;i++) {
-			addTri(
-				0,0,1,
-				glm::cos(2*M_PI*i/subdivisions),glm::sin(2*M_PI*i/subdivisions),1,
-				glm::cos(2*M_PI*(i+1)/subdivisions),glm::sin(2*M_PI*(i+1)/subdivisions),1
-			);
-		}
+
 		fillBuffers();
-//		replaceRigidBody();
 	}
 };
 #endif

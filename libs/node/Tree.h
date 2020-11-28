@@ -31,7 +31,7 @@ class Tree : public SimpleNode {
 		return point(
 				 glm::cos(a * 2 * M_PI / sd),
 				 glm::sin(b * 2 * M_PI / sd),
-				 c,c,glm::sin(b * 2 * M_PI/sd)
+				 c,glm::cos(b*M_PI/2 / sd ),c
 		);
 	}
 	void cylinder() {
@@ -95,6 +95,7 @@ public:
 	}
 
 	explicit Tree(int subdivisions = 25) : SimpleNode() {
+		srand(16);
 		this->subdivisions = subdivisions;
 		base.x=0;base.y=0;base.z=0;
 		rot.x=M_PI/2;rot.y=0;rot.z=0;

@@ -136,3 +136,7 @@ void Camera::moveBy(glm::vec3 move) {
 	if(slow) move = move  / 25.0f;
 	location += move;
 }
+
+glm::vec3 Camera::getLoc() {
+	return location;
+}

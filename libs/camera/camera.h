@@ -103,6 +103,8 @@ public:
 	 * Ex: 	glutKeyboardFunc(cam->keydown);
 	 * */
 	static void keydown(unsigned char key, int x, int y);
+
+	glm::vec3 getLoc();
 };
 
 #endif //OPENGL_CAMERA_HOLD

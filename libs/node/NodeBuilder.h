@@ -10,6 +10,7 @@
 #include "Plane.h"
 #include "Tree.h"
 #include "QuarterBowl.h"
+#include "Cone.h"
 
 /**
  * TODO plan is for all nodes to be constructed in here
@@ -23,6 +24,7 @@ public:
 		undefined,
 		circle,
 		cube,
+		cone,
 		cylinder,
 		sphere,
 		quarterBowl,
@@ -54,6 +56,7 @@ public:
 			case quarterBowl:ret=new QuarterBowl();break;
 			case plane:ret=new Plane();break;
 			case tree:ret=new Tree();break;
+			case cone:ret=new Cone();break;
 		}
 		ret->setTexture(texture);
 		ret->setMass(mass);

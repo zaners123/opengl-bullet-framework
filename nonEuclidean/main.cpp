@@ -35,92 +35,144 @@ void initBullet() {
 	dynamicsWorld->setGravity(btVector3(0.0f, -9.8f, 0.0f));
 }
 
+glm::vec3 getPlayerLoc() {
+	return cam->getLoc();
+}
+
+constexpr int NUM_APPLES = 250;
+constexpr int TREES_DIM = 5;
+SimpleNode* apples[NUM_APPLES];
+
+[[nodiscard]] glm::vec3 treeSpot(int x, int z) {
+	return glm::vec3((x-TREES_DIM/2) * 120, 0, z * 40);
+}
+
+SimpleNode* bowl[4];
+
+glm::vec3 appleSpot() {
+	glm::vec3 ret = treeSpot(rand()%TREES_DIM,rand()%TREES_DIM);
+
+	glm::vec3 locs[] = {
+			glm::vec3(-10,20,0),
+			glm::vec3(10,23,0),
+	};
+
+	ret += locs[rand()%locs->length()];
+	ret+=glm::vec3(rand()%3,rand()%3,rand()%3);
+
+	return ret;
+}
+
 void orchard() {
-	//make tree
+	//main apples
+	for (int i=0;i<NUM_APPLES;i++) {
+		/*apples[i] = NodeBuilder::start()
+				.setShape(NodeBuilder::sphere)
+				->setTexture("../resource/image/appleTex2.jpg")
+				->setMass(i%2?1.0:0.0)
+				->build();*/
+		apples[i] = new Sphere(25);
+		apples[i]->setMass(0);
+		apples[i]->setTexture("../resource/image/appleTex2.jpg");
+		apples[i]->setCOM(appleSpot());
+		apples[i]->scale(.5f);
+		rootNode->push(apples[i]);
+	}
+	//main grass
+//	auto* grass = NodeBuilder::start()
+//			.setShape(NodeBuilder::cone)
+//			->setTexture("../resource/image/blade.png")
+//			->setFixed()
+//			->build();
+	auto grass = new Cone(15,false);
+	grass->setTexture("../resource/image/blade.png");
+	grass->scale(0.4f,2.0f,0.4f);
+	grass->setPos(glm::rotate(grass->getPos(), (float)(3 * M_PI / 2), glm::vec3(1, 0, 0)));
+	for (auto x=0; x < 100000; x++) {
+		grass->addInstance(glm::vec3((rand()%20000-10000)/10.0, (rand()%20000-10000)/10.0, 0));
+	}
+	grass->replaceRigidBody();
+	grass->fillBuffers();
+	rootNode->push(grass,false);
+	//main tree
 	auto* tree = NodeBuilder::start()
 			.setShape(NodeBuilder::tree)
-			->setTexture("../resource/image/wood.jpeg")
-//			->setFixed()
+			->setTexture("../resource/image/would.png")
+			->setFixed()
 			->build();
-	int trees = 100;
-	int spacing = 150;
-	for (int i=0;i<trees;i++) {
-		tree->addInstance(glm::vec3(i/glm::sqrt(trees)*spacing,0,(i%((int)glm::sqrt(trees)))*spacing));
+	for (int x=0; x < TREES_DIM; x++) {
+		for (int z=0; z < TREES_DIM; z++) {
+			tree->addInstance(treeSpot(x,z));
+		}
 	}
 	tree->fillBuffers();
-	rootNode->push(tree);
-
-	//make bowl
-	/*for (int i=0;i<4;i++) {
-		auto* bowl = NodeBuilder::start()
+	rootNode->push(tree,false);
+	//main ground bowl
+	for (int i=0;i<4;i++) {
+		auto* b = NodeBuilder::start()
 				.setShape(NodeBuilder::quarterBowl)
 				->setFixed()
 				->setTexture("../resource/image/wood.jpeg")
 				->build();
-		bowl->setCOM(0,-100,0);
-		bowl->setCOM(0,-100,0);
-		bowl->setCOM(0,-100,0);
-		bowl->scale(10);
-		bowl->setPos(glm::rotate(bowl->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
-		rootNode->push(bowl);
-	}*/
-	//make table
-	auto* table = NodeBuilder::start()
+		b->scale(2);
+		b->setCOM(5,2,0);
+		b->setPos(glm::rotate(b->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
+		rootNode->push(b);
+	}
+	//main holding bowl
+	for (int i=0;i<4;i++) {
+		bowl[i] = NodeBuilder::start()
+				.setShape(NodeBuilder::quarterBowl)
+				->setFixed()
+				->setTexture("../resource/image/wood.jpeg")
+				->build();
+		bowl[i]->scale(2);
+		bowl[i]->setPos(glm::rotate(bowl[i]->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
+		rootNode->push(bowl[i]);
+	}
+	//main ground
+	auto* ground = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
 			->setTexture("../resource/image/grass.jpg")
 			->setFixed()
 			->build();
-	table->move(0,-50.0f,0);
-	table->scale(1000,100,1000);
-	rootNode->push(table);
-	//skybox
-	/*auto* skybox = NodeBuilder::start()
+	ground->move(0, -50.0f, 0);
+	ground->scale(1000, 100, 1000);
+	rootNode->push(ground);
+	//main skybox
+	auto* skybox = NodeBuilder::start()
 			.setShape(NodeBuilder::sphere)
 			->setTexture("../resource/image/sky.jpeg")
 			->build();
 	skybox->rotate(M_PI,0,0);
 	skybox->scale(3000);
 	rootNode->push(skybox,false);
-	//make fruit
-	for (int i=0;i<8;i++) {
-
-		auto* s = new Sphere();
-		int r = i%3;
-		if (r==0)s->setTexture("../resource/image/appleTex2.jpg");
-		if (r==1)s->setTexture("../resource/image/green_apple.jpg");
-		if (r==2)s->setTexture("../resource/image/appleB.jpg");
-//		if (r==2)s->setTexture("../mango.jpg");
-//		if (r==3)s->setTexture("../orange2.png");
-		s->build();
-		s->move(rand()%10-5,0+i*10,rand()%10-5);
-		s->scale(2.5f);
-		s->build();
-		rootNode->push(s);
-	}*/
 }
+
 void orchardFrame() {
-	static int i=0;
-	static int count=0;
-	/*if (count<300 && i++>1) {
-		i=0;
-		auto* s = new Sphere();
-		if (count%3==0) s->setTexture("../resource/image/appleTex2.jpg");
-		if (count%3==1) s->setTexture("../resource/image/appleB.jpg");
-		if (count%3==2) s->setTexture("../resource/image/green_apple.jpg");
-//		if (count%5==3) s->setTexture("../orange2.png");
-//		if (count%5==4) s->setTexture("../lemon.png");
-		s->build();
-		s->move(rand()%10-5,580+i*5,rand()%10-5);
-		s->scale((((float)(rand()%1000))/1000)*3+1.0f);
-		s->setMass(i+5);
-		s->scale(1);
-		s->build();
-		rootNode->push(s);
-		count++;
-		if (count%100==0) {
-			std::cout<<"FRUIT:"<<count<<std::endl;
-		}
-	}*/
+
+	//do nothing most frames
+	static int skip=0;while (skip++ < 5000/NUM_APPLES) return;skip=0;
+	//let all apples move if they wanna
+	static int appleI=0;
+
+	for (auto* a : apples) {
+		if (!a) continue;
+//		if ((i+appleI+NUM_APPLES)%NUM_APPLES < 250) {
+			a->rb->setActivationState(DISABLE_DEACTIVATION);
+//		} else {
+//			a->rb->setActivationState(DISABLE_SIMULATION);
+//		}
+
+	}
+
+	int update = appleI;//rand()%NUM_APPLES;
+	apples[update]->setCOM(appleSpot());
+	apples[update]->setFixed();
+	apples[NUM_APPLES-update-1]->setCOM(appleSpot());
+	apples[NUM_APPLES-update-1]->setMass(1);
+	apples[NUM_APPLES-update-1]->setLinearVelocity(0,5,0);
+	appleI= (appleI + 1) % NUM_APPLES;
 }
 
 void setupRootNode() {
@@ -150,7 +202,12 @@ FPS fps = FPS();
 void display() {
 	fps.tick();
 //	glScissor(0,0,cam->windowX,cam->windowY);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+
 	drawRootNode();
 	glFlush();
 //	glutPostRedisplay();
@@ -168,9 +225,14 @@ void physicsLoop(int n) {
 	onFrame();
 }
 
+void onDraw() {
+	for (int a=0;a<4;a++) if (bowl[a]) bowl[a]->setCOM(getPlayerLoc() + glm::vec3(glm::vec4(0,-.5f,5,0) * cam->getWVP()));
+}
+
 void drawLoop(int n) {
 	glutTimerFunc(20, drawLoop, n);
 	cam->gameLoop();
+	onDraw();
 	glutPostRedisplay();
 }
 

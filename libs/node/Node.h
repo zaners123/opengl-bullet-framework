@@ -74,7 +74,7 @@ public:
 	}
 
 	virtual void setMass(const btScalar mass) {
-		if (this->mass == mass) return;
+//		if (this->mass == mass) return;
 		this->mass = mass;
 		replaceRigidBody();
 	}
