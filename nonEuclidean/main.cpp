@@ -63,20 +63,20 @@ glm::vec3 appleSpot() {
 	return ret;
 }
 
+Sphere* spawnApple(glm::vec3 loc, int mass) {
+	Sphere* ret  = new Sphere(25);
+	ret ->setMass(mass);
+	ret ->setTexture("../resource/image/appleTex2.jpg");
+	ret ->setCOM(loc);
+	ret ->scale(.5f);
+	rootNode->push(ret);
+	return ret;
+}
+
 void orchard() {
 	//main apples
 	for (int i=0;i<NUM_APPLES;i++) {
-		/*apples[i] = NodeBuilder::start()
-				.setShape(NodeBuilder::sphere)
-				->setTexture("../resource/image/appleTex2.jpg")
-				->setMass(i%2?1.0:0.0)
-				->build();*/
-		apples[i] = new Sphere(25);
-		apples[i]->setMass(0);
-		apples[i]->setTexture("../resource/image/appleTex2.jpg");
-		apples[i]->setCOM(appleSpot());
-		apples[i]->scale(.5f);
-		rootNode->push(apples[i]);
+		apples[i] = spawnApple(appleSpot(),i<NUM_APPLES/2?1:0);
 	}
 	//main grass
 //	auto* grass = NodeBuilder::start()
@@ -108,6 +108,8 @@ void orchard() {
 	tree->fillBuffers();
 	rootNode->push(tree,false);
 	//main ground bowl
+	spawnApple(glm::vec3(6,20,50),true);
+	spawnApple(glm::vec3(5,30,50),true);
 	for (int i=0;i<4;i++) {
 		auto* b = NodeBuilder::start()
 				.setShape(NodeBuilder::quarterBowl)
@@ -115,12 +117,12 @@ void orchard() {
 				->setTexture("../resource/image/wood.jpeg")
 				->build();
 		b->scale(2);
-		b->setCOM(5,2,0);
+		b->setCOM(5,2,50);
 		b->setPos(glm::rotate(b->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
 		rootNode->push(b);
 	}
 	//main holding bowl
-	for (int i=0;i<4;i++) {
+	/*for (int i=0;i<4;i++) {
 		bowl[i] = NodeBuilder::start()
 				.setShape(NodeBuilder::quarterBowl)
 				->setFixed()
@@ -129,7 +131,7 @@ void orchard() {
 		bowl[i]->scale(2);
 		bowl[i]->setPos(glm::rotate(bowl[i]->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
 		rootNode->push(bowl[i]);
-	}
+	}*/
 	//main ground
 	auto* ground = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
@@ -152,7 +154,7 @@ void orchard() {
 void orchardFrame() {
 
 	//do nothing most frames
-	static int skip=0;while (skip++ < 5000/NUM_APPLES) return;skip=0;
+	static int skip=0;while (skip++ < 500/NUM_APPLES) return;skip=0;
 	//let all apples move if they wanna
 	static int appleI=0;
 
@@ -167,11 +169,12 @@ void orchardFrame() {
 	}
 
 	int update = appleI;//rand()%NUM_APPLES;
-	apples[update]->setCOM(appleSpot());
-	apples[update]->setFixed();
-	apples[NUM_APPLES-update-1]->setCOM(appleSpot());
-	apples[NUM_APPLES-update-1]->setMass(1);
-	apples[NUM_APPLES-update-1]->setLinearVelocity(0,5,0);
+	if (apples[update]->mass>0) {
+		apples[update]->setCOM(appleSpot());
+	}
+//	apples[NUM_APPLES-update-1]->setCOM(appleSpot());
+//	apples[NUM_APPLES-update-1]->setMass(1);
+//	apples[NUM_APPLES-update-1]->setLinearVelocity(0,5,0);
 	appleI= (appleI + 1) % NUM_APPLES;
 }
 
@@ -206,10 +209,11 @@ void display() {
 
 //	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-
 	drawRootNode();
-	glFlush();
+
+	glutSwapBuffers();
+//	glFlush();
+
 //	glutPostRedisplay();
 }
 
@@ -238,7 +242,7 @@ void drawLoop(int n) {
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA|GLUT_STENCIL|GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_RGBA|GLUT_STENCIL|GLUT_DEPTH|GLUT_DOUBLE);
 	glutCreateWindow("Apple Bowl");
 	if (glewInit()) {
 		printf("%s\n", "Unable to initialize GLEW ...");
