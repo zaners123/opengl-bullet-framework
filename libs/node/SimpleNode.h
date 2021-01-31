@@ -173,6 +173,7 @@ public:
 	 * @see SimpleNode::getIsInstanced()
 	 * */
 	void updateShader() {
+		if (progLock) return;
 		//todo test if prog already set? This might delete other progs?
 		glDeleteProgram(prog);
 		if (getIsInstanced()) {
@@ -188,6 +189,11 @@ public:
 				prog = loadShader("../libs/node/shader/SimpleColored.vs", "../libs/node/shader/SimpleColored.fs");
 			}
 		}
+	}
+
+	void setExternalProg(GLuint newProg) {
+		prog = newProg;
+		progLock = true;
 	}
 
 	void setIsInstanced(bool isInstanced) {

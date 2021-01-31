@@ -17,6 +17,7 @@
 #include "../libs/Timer.h"
 #include "../libs/node/NodeVector.h"
 #include "../libs/node/NodeBuilder.h"
+#include "../libs/node/meshes/Grass.h"
 
 Camera* cam;
 NodeVector* rootNode;
@@ -79,21 +80,21 @@ void orchard() {
 		apples[i] = spawnApple(appleSpot(),i<NUM_APPLES/2?1:0);
 	}
 	//main grass
-//	auto* grass = NodeBuilder::start()
-//			.setShape(NodeBuilder::cone)
-//			->setTexture("../resource/image/blade.png")
-//			->setFixed()
-//			->build();
-	auto grass = new Cone(15,false);
-	grass->setTexture("../resource/image/blade.png");
-	grass->scale(0.4f,2.0f,0.4f);
+	auto grass = new Cone(5,false);
+	grass->scale(0.2f,2.0f,0.2f);
 	grass->setPos(glm::rotate(grass->getPos(), (float)(3 * M_PI / 2), glm::vec3(1, 0, 0)));
-	for (auto x=0; x < 100000; x++) {
-		grass->addInstance(glm::vec3((rand()%20000-10000)/10.0, (rand()%20000-10000)/10.0, 0));
+	long groundLen = 800;
+	for (auto x=0; x < 1000000l; x++) {
+		long diam = 20000;
+		grass->addInstance(glm::vec3((rand()%(2*diam)-diam)/10.0, (rand()%(2*diam)-(diam))/10.0, 0));
 	}
 	grass->replaceRigidBody();
 	grass->fillBuffers();
+	grass->setExternalProg(loadShader("../libs/node/shader/external/grass.vs", "../libs/node/shader/external/grass.fs"));
 	rootNode->push(grass,false);
+
+
+
 	//main tree
 	auto* tree = NodeBuilder::start()
 			.setShape(NodeBuilder::tree)
@@ -139,7 +140,7 @@ void orchard() {
 			->setFixed()
 			->build();
 	ground->move(0, -50.0f, 0);
-	ground->scale(1000, 100, 1000);
+	ground->scale(groundLen, 100, groundLen);
 	rootNode->push(ground);
 	//main skybox
 	auto* skybox = NodeBuilder::start()
@@ -165,7 +166,6 @@ void orchardFrame() {
 //		} else {
 //			a->rb->setActivationState(DISABLE_SIMULATION);
 //		}
-
 	}
 
 	int update = appleI;//rand()%NUM_APPLES;

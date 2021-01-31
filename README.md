@@ -1,3 +1,8 @@
+# TODO
+Add leaves (red,yellow,maple leaves, green leaves)
+Fix grass (make thinner / wavier)
+Change grass texture with dirt / green texture
+
 # My OpenGL/Bullet code
 
 Some really good (fine, they're just okay) OpenGL/Bullet code examples.
