@@ -81,6 +81,7 @@ void orchard() {
 	}
 	//main grass
 	auto grass = new Cone(5,false);
+
 	grass->scale(0.2f,2.0f,0.2f);
 	grass->setPos(glm::rotate(grass->getPos(), (float)(3 * M_PI / 2), glm::vec3(1, 0, 0)));
 	long groundLen = 800;
@@ -93,21 +94,35 @@ void orchard() {
 	grass->setExternalProg(loadShader("../libs/node/shader/external/grass.vs", "../libs/node/shader/external/grass.fs"));
 	rootNode->push(grass,false);
 
-
-
 	//main tree
-	auto* tree = NodeBuilder::start()
+	Tree* tree = (Tree*)NodeBuilder::start()
 			.setShape(NodeBuilder::tree)
 			->setTexture("../resource/image/would.png")
 			->setFixed()
 			->build();
+
+	auto* leaf = new Sphere(6,4);
+	leaf->setTexture("../resource/image/leaf.jpg");
+	//leaf->scale(2);
+	leaf->setFixed();
+
 	for (int x=0; x < TREES_DIM; x++) {
 		for (int z=0; z < TREES_DIM; z++) {
-			tree->addInstance(treeSpot(x,z));
+			glm::vec3 spot = treeSpot(x,z);
+			tree->addInstance(spot);
+			//add leaves
+			for (SimpleNode::Point p : tree->leaves) {
+				leaf->addInstance(glm::vec3((spot.x+.5f*p.x),(spot.y+.5f*p.y),(spot.z+.5f*p.z)));
+			}
 		}
 	}
+
+	leaf->fillBuffers();
+	rootNode->push(leaf,false);
+
 	tree->fillBuffers();
 	rootNode->push(tree,false);
+
 	//main ground bowl
 	spawnApple(glm::vec3(6,20,50),true);
 	spawnApple(glm::vec3(5,30,50),true);

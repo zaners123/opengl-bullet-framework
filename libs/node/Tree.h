@@ -34,6 +34,7 @@ class Tree : public SimpleNode {
 				 c,glm::cos(b*M_PI/2 / sd ),c
 		);
 	}
+
 	void cylinder() {
 		//bottom/top
 		for (int side=0;side<=1;side++) {
@@ -69,21 +70,30 @@ class Tree : public SimpleNode {
 	}
 public:
 
-	GLfloat rand_neghalf_half() {
+	std::vector<Point> leaves = std::vector<Point>();
+
+	static GLfloat rand_neghalf_half() {
 		return ((GLfloat)(rand()%256-128))/128;
 	}
 
+
 	void fractal(Point base, Point rot, double r, double h, int depth) {
 		cylinder(base,rot,r,h);
-		if (depth < 0) return;
+
 		base+=point(0,0,h).rotate(rot.x,rot.y,rot.z);
+
+		if (depth < 0) {
+			leaves.push_back(base);
+			return;
+		}
 
 		//shrink lengths as distance grows
 		h *= .8f;
 		r *= .6f;
 
 		GLfloat turn = M_PI / 4;
-		for (int i=0;i<rand()%4+3;i++)
+
+		for (int forks = rand()%4+3;forks>=0;forks--)
 			fractal(
 				base,
 	        rot + point(
@@ -95,7 +105,7 @@ public:
 	}
 
 	explicit Tree(int subdivisions = 25) : SimpleNode() {
-		srand(16);
+		srand(17);
 		this->subdivisions = subdivisions;
 		base.x=0;base.y=0;base.z=0;
 		rot.x=M_PI/2;rot.y=0;rot.z=0;
