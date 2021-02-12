@@ -67,7 +67,7 @@ glm::vec3 appleSpot() {
 Sphere* spawnApple(glm::vec3 loc, int mass) {
 	Sphere* ret  = new Sphere(25);
 	ret ->setMass(mass);
-	ret ->setTexture("../resource/image/appleTex2.jpg");
+	ret ->setTexture("resource/image/appleTex2.jpg");
 	ret ->setCOM(loc);
 	ret ->scale(.5f);
 	rootNode->push(ret);
@@ -91,18 +91,18 @@ void orchard() {
 	}
 	grass->replaceRigidBody();
 	grass->fillBuffers();
-	grass->setExternalProg(loadShader("../libs/node/shader/external/grass.vs", "../libs/node/shader/external/grass.fs"));
+	grass->setExternalProg(loadShader("libs/node/shader/external/grass.vs", "libs/node/shader/external/grass.fs"));
 	rootNode->push(grass,false);
 
 	//main tree
 	Tree* tree = (Tree*)NodeBuilder::start()
 			.setShape(NodeBuilder::tree)
-			->setTexture("../resource/image/would.png")
+			->setTexture("resource/image/would.png")
 			->setFixed()
 			->build();
 
 	auto* leaf = new Sphere(6,4);
-	leaf->setTexture("../resource/image/leaf.jpg");
+	leaf->setTexture("resource/image/leaf.jpg");
 	//leaf->scale(2);
 	leaf->setFixed();
 
@@ -130,7 +130,7 @@ void orchard() {
 		auto* b = NodeBuilder::start()
 				.setShape(NodeBuilder::quarterBowl)
 				->setFixed()
-				->setTexture("../resource/image/wood.jpeg")
+				->setTexture("resource/image/wood.jpeg")
 				->build();
 		b->scale(2);
 		b->setCOM(5,2,50);
@@ -142,7 +142,7 @@ void orchard() {
 		bowl[i] = NodeBuilder::start()
 				.setShape(NodeBuilder::quarterBowl)
 				->setFixed()
-				->setTexture("../resource/image/wood.jpeg")
+				->setTexture("resource/image/wood.jpeg")
 				->build();
 		bowl[i]->scale(2);
 		bowl[i]->setPos(glm::rotate(bowl[i]->getPos(), (float)(i * M_PI / 2), glm::vec3(0, 1, 0)));
@@ -151,7 +151,7 @@ void orchard() {
 	//main ground
 	auto* ground = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
-			->setTexture("../resource/image/grass.jpg")
+			->setTexture("resource/image/grass.jpg")
 			->setFixed()
 			->build();
 	ground->move(0, -50.0f, 0);
@@ -160,7 +160,7 @@ void orchard() {
 	//main skybox
 	auto* skybox = NodeBuilder::start()
 			.setShape(NodeBuilder::sphere)
-			->setTexture("../resource/image/sky.jpeg")
+			->setTexture("resource/image/sky.jpeg")
 			->build();
 	skybox->rotate(M_PI,0,0);
 	skybox->scale(3000);

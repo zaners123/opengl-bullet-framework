@@ -4,6 +4,7 @@ project(opengl)
 set(CMAKE_CXX_STANDARD 17)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+# set(CMAKE_CXX_COMPILER /usr/bin/gcc)
 
 INCLUDE_DIRECTORIES(${BULLET_PHYSICS_SOURCE_DIR}/src)
 LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)

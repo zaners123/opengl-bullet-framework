@@ -178,15 +178,15 @@ public:
 		glDeleteProgram(prog);
 		if (getIsInstanced()) {
 			if (isTextured()) {
-				prog = loadShader("../libs/node/shader/InstancedTextured.vs", "../libs/node/shader/InstancedTextured.fs");
+				prog = loadShader("libs/node/shader/InstancedTextured.vs", "libs/node/shader/InstancedTextured.fs");
 			} else {
-				prog = loadShader("../libs/node/shader/InstancedColored.vs", "../libs/node/shader/InstancedColored.fs");
+				prog = loadShader("libs/node/shader/InstancedColored.vs", "libs/node/shader/InstancedColored.fs");
 			}
 		} else {
 			if (isTextured()) {
-				prog = loadShader("../libs/node/shader/SimpleTextured.vs", "../libs/node/shader/SimpleTextured.fs");
+				prog = loadShader("libs/node/shader/SimpleTextured.vs", "libs/node/shader/SimpleTextured.fs");
 			} else {
-				prog = loadShader("../libs/node/shader/SimpleColored.vs", "../libs/node/shader/SimpleColored.fs");
+				prog = loadShader("libs/node/shader/SimpleColored.vs", "libs/node/shader/SimpleColored.fs");
 			}
 		}
 	}

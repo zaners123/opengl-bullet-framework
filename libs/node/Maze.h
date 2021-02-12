@@ -53,7 +53,7 @@ class Maze : public Node {
 public:
 	explicit Maze(int dim) {
 
-		prog = loadShader("../camera/instance.vs", "../camera/instance.fs");
+		prog = loadShader("camera/instance.vs", "camera/instance.fs");
 
 		if (dim%2==0) {
 			std::cerr<<"DO ODD DIM"<<std::endl;
