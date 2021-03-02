@@ -92,6 +92,7 @@ public:
 		r *= .6f;
 
 		GLfloat turn = M_PI / 4;
+		if(depth==3) turn=M_PI/4;
 
 		for (int forks = rand()%4+3;forks>=0;forks--)
 			fractal(
@@ -105,7 +106,7 @@ public:
 	}
 
 	explicit Tree(int subdivisions = 25) : SimpleNode() {
-		srand(17);
+		srand(12);
 		this->subdivisions = subdivisions;
 		base.x=0;base.y=0;base.z=0;
 		rot.x=M_PI/2;rot.y=0;rot.z=0;

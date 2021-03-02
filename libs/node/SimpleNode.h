@@ -64,13 +64,13 @@ public:
 	};
 private:
 	friend class NodeBuilder;
-	bool textured;
+	bool textured = false;
 	GLuint imageTexture = 0;
 	std::vector<Triangle> triangleData;
 	std::vector<glm::vec3> instanceData;
 
-	int getNumVerts() {
-		return triangleData.size()*3;
+	unsigned long getNumVerts() {
+		return triangleData.size()*3UL;
 	}
 	void initBuffers() {
 		glGenVertexArrays(1, &vao);
@@ -97,7 +97,7 @@ public:
 		p.texY = 0;
 		return p;
 	}
-	virtual void replaceRigidBody() override {
+	void replaceRigidBody() override {
 		//physics
 		std::vector<btVector3> convexPoints;
 
@@ -110,15 +110,15 @@ public:
 			if (++i < divide) continue;
 			i=0;
 			glm::vec3 a = applyPosOnly(glm::vec3(t.pointA.x,t.pointA.y,t.pointA.z));
-			convexPoints.push_back(btVector3(a.x,a.y,a.z));
+			convexPoints.emplace_back(btVector3(a.x,a.y,a.z));
 			if (!hugeMesh) {
 				glm::vec3 b = applyPosOnly(glm::vec3(t.pointB.x,t.pointB.y,t.pointB.z));
-				convexPoints.push_back(btVector3(b.x,b.y,b.z));
+				convexPoints.emplace_back(btVector3(b.x,b.y,b.z));
 				glm::vec3 c = applyPosOnly(glm::vec3(t.pointC.x,t.pointC.y,t.pointC.z));
-				convexPoints.push_back(btVector3(c.x,c.y,c.z));
+				convexPoints.emplace_back(btVector3(c.x,c.y,c.z));
 			}
 		}
-		btConvexHullShape* shape = new btConvexHullShape(&convexPoints[0].getX(), convexPoints.size(), sizeof(btVector3));
+		auto* shape = new btConvexHullShape(&convexPoints[0].getX(), convexPoints.size(), sizeof(btVector3));
 		shape->optimizeConvexHull();
 		shape->recalcLocalAabb();
 
@@ -205,7 +205,7 @@ public:
 		updateShader();
 	}
 
-	bool isTextured() {
+	bool isTextured() const {
 		return textured;
 	}
 
@@ -232,12 +232,12 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 		glBufferData(GL_ARRAY_BUFFER,
-			   instanceData.size() * sizeof(glm::vec3) + triangleData.size() * sizeof(Triangle),
+			   instanceData.size() * sizeof(glm::vec3) + triangleData.size() * sizeof(SimpleNode::Triangle),
 			   &triangleData[0], GL_STATIC_DRAW);
 
 		GLsizei stride = 5*sizeof(GLfloat);
 
-		void* offset = 0;
+		void* offset = nullptr;
 
 		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, stride, offset);
 		glEnableVertexAttribArray(0);  // Position data

@@ -85,11 +85,12 @@ void orchard() {
 	grass->scale(0.2f,2.0f,0.2f);
 	grass->setPos(glm::rotate(grass->getPos(), (float)(3 * M_PI / 2), glm::vec3(1, 0, 0)));
 	long groundLen = 800;
-	for (auto x=0; x < 1000000l; x++) {
+	srand(15);
+	for (auto x=0; x < 200000l; x++) {
 		long diam = 20000;
-		grass->addInstance(glm::vec3((rand()%(2*diam)-diam)/10.0, (rand()%(2*diam)-(diam))/10.0, 0));
+		grass->addInstance(glm::vec3((double)(rand()%(2*diam)-diam)/10.0,(double)(rand()%(2*diam)-diam)/10.0,0));
 	}
-	grass->replaceRigidBody();
+//	grass->replaceRigidBody();
 	grass->fillBuffers();
 	grass->setExternalProg(loadShader("libs/node/shader/external/grass.vs", "libs/node/shader/external/grass.fs"));
 	rootNode->push(grass,false);
