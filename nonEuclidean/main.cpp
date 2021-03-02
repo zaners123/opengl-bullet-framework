@@ -87,8 +87,8 @@ void orchard() {
 	long groundLen = 800;
 	srand(15);
 	for (auto x=0; x < 200000l; x++) {
-		long diam = 20000;
-		grass->addInstance(glm::vec3((double)(rand()%(2*diam)-diam)/10.0,(double)(rand()%(2*diam)-diam)/10.0,0));
+		long diam = 80000;
+		grass->addInstance(glm::vec3((double)(rand()%(2*diam)-diam)/40.0,(double)(rand()%(2*diam)-diam)/40.0,0));
 	}
 //	grass->replaceRigidBody();
 	grass->fillBuffers();
@@ -102,9 +102,9 @@ void orchard() {
 			->setFixed()
 			->build();
 
-	auto* leaf = new Sphere(6,4);
+	auto* leaf = new Sphere(6,3.5);
 	leaf->setTexture("resource/image/leaf.jpg");
-	//leaf->scale(2);
+	leaf->scale(1);
 	leaf->setFixed();
 
 	for (int x=0; x < TREES_DIM; x++) {
