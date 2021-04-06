@@ -163,8 +163,8 @@ void orchard() {
 			.setShape(NodeBuilder::sphere)
 			->setTexture("resource/image/sky.jpeg")
 			->build();
-	skybox->rotate(M_PI,0,0);
 	skybox->scale(3000);
+	skybox->move(0,-200,0);
 	rootNode->push(skybox,false);
 }
 
