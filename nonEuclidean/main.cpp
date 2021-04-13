@@ -41,7 +41,12 @@ glm::vec3 getPlayerLoc() {
 }
 
 constexpr int NUM_APPLES = 250;
-constexpr int TREES_DIM = 5;
+constexpr int TREES_DIM = 6;
+const long groundLen = 1200;
+const long grassLen = groundLen*100;
+const long numGrass = 50000l;
+
+
 SimpleNode* apples[NUM_APPLES];
 
 [[nodiscard]] glm::vec3 treeSpot(int x, int z) {
@@ -80,15 +85,13 @@ void orchard() {
 		apples[i] = spawnApple(appleSpot(),i<NUM_APPLES/2?1:0);
 	}
 	//main grass
-	auto grass = new Cone(5,false);
+	auto grass = new Cone(3,false);
 
 	grass->scale(0.2f,2.0f,0.2f);
 	grass->setPos(glm::rotate(grass->getPos(), (float)(3 * M_PI / 2), glm::vec3(1, 0, 0)));
-	long groundLen = 800;
 	srand(15);
-	for (auto x=0; x < 200000l; x++) {
-		long diam = 80000;
-		grass->addInstance(glm::vec3((double)(rand()%(2*diam)-diam)/40.0,(double)(rand()%(2*diam)-diam)/40.0,0));
+	for (auto x=0; x < numGrass; x++) {
+		grass->addInstance(glm::vec3((double)(rand()%(2 * grassLen) - grassLen) / 40.0, (double)(rand() % (2 * grassLen) - grassLen) / 40.0, 0));
 	}
 //	grass->replaceRigidBody();
 	grass->fillBuffers();
