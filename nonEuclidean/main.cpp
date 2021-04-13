@@ -155,7 +155,7 @@ void orchard() {
 	//main ground
 	auto* ground = NodeBuilder::start()
 			.setShape(NodeBuilder::cube)
-			->setTexture("resource/image/grass.jpg")
+			->setTexture("resource/image/grass4.png")
 			->setFixed()
 			->build();
 	ground->move(0, -50.0f, 0);
